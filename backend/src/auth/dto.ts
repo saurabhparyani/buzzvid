@@ -4,8 +4,8 @@ import { IsEmail, IsNotEmpty, MinLength, IsString } from 'class-validator';
 @InputType()
 export class RegisterDto {
   @Field()
-  @IsNotEmpty({ message: 'Fullname is required.' })
-  @IsString({ message: 'Fullname must be a string.' })
+  @IsNotEmpty({ message: 'fullname is required.' })
+  @IsString({ message: 'fullname must be a string.' })
   fullname: string;
 
   @Field()

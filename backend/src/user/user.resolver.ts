@@ -2,9 +2,10 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { RegisterResponse, LoginResponse } from 'src/auth/types';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UseFilters } from '@nestjs/common';
 import { LoginDto, RegisterDto } from 'src/auth/dto';
 import { Request, Response } from 'express';
+import { GraphQLErrorFilter } from 'src/filters/custom-exception.filter';
 
 @Resolver()
 export class UserResolver {
@@ -13,6 +14,8 @@ export class UserResolver {
         private readonly authService: AuthService,
         private readonly userService: UserService,
     ) {}
+
+    @UseFilters(GraphQLErrorFilter)
 
     @Mutation(() => RegisterResponse)
     async register(
@@ -24,22 +27,12 @@ export class UserResolver {
                 confirmPassword: 'Password and confirm password are not the same.',
             });
         }
-        try {
             const { user } = await this.authService.register(
                 registerDto,
                 context.res,
             );
-            console.log('user!', user);
+            console.log('Registered User:', user);
             return { user };
-        } catch (error) {
-            // Handle the error, for instance if it's a validation error or some other type
-            return {
-                error: {
-                    message: error.message,
-                    // code: 'SOME_ERROR_CODE' // If you have error codes
-                },
-            };
-        }
     }
 
     @Mutation(() => LoginResponse)

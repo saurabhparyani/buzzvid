@@ -7,6 +7,12 @@ import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { ApolloProvider } from "@apollo/client";
+import { client } from "@/utils/apolloClient";
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
+
+loadDevMessages();
+loadErrorMessages();
 
 import { routeTree } from "./routeTree.gen";
 
@@ -28,11 +34,13 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     {/* <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme"> */}
     {/* <GoogleOAuthProviderWrapper> */}
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster />
-      <ReactQueryDevtools />
-    </QueryClientProvider>
+    <ApolloProvider client={client}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster />
+        <ReactQueryDevtools />
+      </QueryClientProvider>
+    </ApolloProvider>
     {/* </GoogleOAuthProviderWrapper> */}
     {/* </ThemeProvider> */}
   </StrictMode>

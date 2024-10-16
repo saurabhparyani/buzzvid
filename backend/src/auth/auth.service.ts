@@ -92,7 +92,7 @@ export class AuthService {
         });
     
         if (existingUser) {
-          throw new Error('Email already exists'); 
+          throw new BadRequestException({email: 'Email already exists'}); 
         }
     
         const hashedPassword = await bcrypt.hash(registerDto.password, 10);
@@ -101,15 +101,22 @@ export class AuthService {
             fullname: registerDto.fullname,
             password: hashedPassword,
             email: registerDto.email,
-        })
-        return this.issueTokens(user, response); 
+        });
+    
+        // Log the created user to verify fullname
+        console.log('Created User:', user.toObject({ getters: true, virtuals: true }));
+    
+        // Convert user to plain object to ensure serialization
+        const plainUser = user.toObject({ getters: true, virtuals: true });
+        
+        return this.issueTokens(plainUser, response); 
     }
 
     async login(loginDto: LoginDto, response: Response) {
         const user = await this.validateUser(loginDto);
     
         if (!user) {
-          throw new Error('Invalid credentials'); 
+          throw new BadRequestException({invalidCredentials: 'Invalid credentials'}); 
         }
     
         return this.issueTokens(user, response);

@@ -42,7 +42,7 @@ input RegisterDto {
 
 type RegisterResponse {
   error: ErrorType
-  user: User
+  user: User!
 }
 
 type User {
@@ -52,6 +52,5 @@ type User {
   email: String!
   fullname: String!
   image: String
-  password: String!
   updatedAt: DateTime!
 }

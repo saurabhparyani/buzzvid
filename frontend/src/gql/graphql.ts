@@ -54,7 +54,7 @@ export type RegisterUserMutationVariables = Exact<{
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', user?: { __typename?: 'User', _id: string, fullname: string, email: string } | null } };
+export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', user: { __typename?: 'User', _id: string, fullname: string, email: string } } };
 
 
 export const LoginUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"LoginUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"ObjectField","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"_id"}},{"kind":"Field","name":{"kind":"Name","value":"fullname"}}]}}]}}]}}]} as unknown as DocumentNode<LoginUserMutation, LoginUserMutationVariables>;
@@ -121,7 +121,7 @@ export type RegisterDto = {
 export type RegisterResponse = {
   __typename?: 'RegisterResponse';
   error?: Maybe<ErrorType>;
-  user?: Maybe<User>;
+  user: User;
 };
 
 export type User = {
@@ -132,7 +132,6 @@ export type User = {
   email: Scalars['String']['output'];
   fullname: Scalars['String']['output'];
   image?: Maybe<Scalars['String']['output']>;
-  password: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -157,7 +156,7 @@ export type RegisterUserMutationVariables = Exact<{
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', user?: { __typename?: 'User', _id: string, fullname: string, email: string } | null } };
+export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'RegisterResponse', user: { __typename?: 'User', _id: string, fullname: string, email: string } } };
 
 
 export const LoginUserDocument = gql`

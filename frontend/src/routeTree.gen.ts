@@ -13,11 +13,13 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RegisterImport } from './routes/register'
+import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
+import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
 
-const IndexLazyImport = createFileRoute('/')()
 const AuthenticatedUploadLazyImport = createFileRoute(
   '/_authenticated/upload',
 )()
@@ -31,15 +33,25 @@ const AuthenticatedPostIdLazyImport = createFileRoute(
 
 // Create/Update Routes
 
+const RegisterRoute = RegisterImport.update({
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoginRoute = LoginImport.update({
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthenticatedRoute = AuthenticatedImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
 
 const AuthenticatedUploadLazyRoute = AuthenticatedUploadLazyImport.update({
   path: '/upload',
@@ -79,7 +91,7 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated': {
@@ -87,6 +99,20 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AuthenticatedImport
+      parentRoute: typeof rootRoute
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated/feed': {
@@ -141,8 +167,10 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/feed': typeof AuthenticatedFeedLazyRoute
   '/upload': typeof AuthenticatedUploadLazyRoute
   '/post/$id': typeof AuthenticatedPostIdLazyRoute
@@ -150,8 +178,10 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/feed': typeof AuthenticatedFeedLazyRoute
   '/upload': typeof AuthenticatedUploadLazyRoute
   '/post/$id': typeof AuthenticatedPostIdLazyRoute
@@ -160,8 +190,10 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/_authenticated/feed': typeof AuthenticatedFeedLazyRoute
   '/_authenticated/upload': typeof AuthenticatedUploadLazyRoute
   '/_authenticated/post/$id': typeof AuthenticatedPostIdLazyRoute
@@ -170,13 +202,31 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/feed' | '/upload' | '/post/$id' | '/profile/$id'
+  fullPaths:
+    | '/'
+    | ''
+    | '/login'
+    | '/register'
+    | '/feed'
+    | '/upload'
+    | '/post/$id'
+    | '/profile/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/feed' | '/upload' | '/post/$id' | '/profile/$id'
+  to:
+    | '/'
+    | ''
+    | '/login'
+    | '/register'
+    | '/feed'
+    | '/upload'
+    | '/post/$id'
+    | '/profile/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/login'
+    | '/register'
     | '/_authenticated/feed'
     | '/_authenticated/upload'
     | '/_authenticated/post/$id'
@@ -185,13 +235,17 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 }
 
 export const routeTree = rootRoute
@@ -207,11 +261,13 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_authenticated"
+        "/_authenticated",
+        "/login",
+        "/register"
       ]
     },
     "/": {
-      "filePath": "index.lazy.tsx"
+      "filePath": "index.tsx"
     },
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
@@ -221,6 +277,12 @@ export const routeTree = rootRoute
         "/_authenticated/post/$id",
         "/_authenticated/profile/$id"
       ]
+    },
+    "/login": {
+      "filePath": "login.tsx"
+    },
+    "/register": {
+      "filePath": "register.tsx"
     },
     "/_authenticated/feed": {
       "filePath": "_authenticated/feed.lazy.tsx",

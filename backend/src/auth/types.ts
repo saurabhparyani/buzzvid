@@ -11,7 +11,7 @@ export class ErrorType {
 
 @ObjectType()
 export class RegisterResponse {
-  @Field(() => User, { nullable: true }) // Assuming User is another ObjectType you have
+  @Field(() => User, { nullable: false }) // Assuming User is another ObjectType you have
   user?: User;
 
   @Field(() => ErrorType, { nullable: true })

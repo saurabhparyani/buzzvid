@@ -1,34 +1,41 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from "mongoose";
+import { Field, HideField, ObjectType } from "@nestjs/graphql";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document, Schema as MongooseSchema } from "mongoose";
 
 export type UserDocument = User & Document;
 
 @ObjectType()
 @Schema()
 export class User {
-  @Field()
-  _id?: string;
+  @Field(() => String)
+  _id: MongooseSchema.Types.ObjectId;
 
   @Field()
+  @Prop({ required: true })
   fullname: string;
 
   @Field()
-  email?: string;
+  @Prop({ required: true, unique: true })
+  email: string;
 
-  @Field()
+  @HideField()
+  @Prop({ required: true })
   password: string;
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
+  @Prop()
   bio?: string;
 
-  @Field({nullable: true})
-  image: string;
+  @Field({ nullable: true })
+  @Prop()
+  image?: string;
 
-  @Field()
+  @Field(() => Date)
+  @Prop({ default: Date.now })
   createdAt: Date;
 
-  @Field()
+  @Field(() => Date)
+  @Prop({ default: Date.now })
   updatedAt: Date;
 }
 
