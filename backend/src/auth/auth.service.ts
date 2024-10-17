@@ -156,7 +156,12 @@ export class AuthService {
               email,
               fullname: payload.name || '',
               googleId: payload.sub,
+              googleImage: payload.picture
             });
+          } else if (!user.googleImage) {
+            // Update existing user with Google image if not present
+            user.googleImage = payload.picture;
+            await user.save();
           }
       
           return this.issueTokens(user, response);

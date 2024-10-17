@@ -8,6 +8,7 @@ export interface User {
   email?: string
   bio?: string
   image?: string
+  googleImage?: string
 }
 
 export interface UserActions {
@@ -24,10 +25,11 @@ export const useUserStore = create<User & UserActions>()(
         email: "",
         bio: "",
         image: "",
+        googleImage: "",
 
         setUser: (user) => set(user),
         logout: () => {
-          set({ _id: "", fullname: "", email: "", bio: "", image: "" })
+          set({ _id: "", fullname: "", email: "", bio: "", image: "", googleImage: "" })
         },
       }),
       {

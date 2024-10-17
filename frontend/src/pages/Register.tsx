@@ -99,20 +99,18 @@ const Register = () => {
 
   const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
     try {
-      console.log("Google credential response:", credentialResponse);
       const result = await googleLoginMutation({
         variables: {
           token: credentialResponse.credential,
         },
       });
 
-      console.log("Google login mutation result:", result);
-
       if (result.data?.googleLogin.user) {
         setUser({
           _id: result.data.googleLogin.user._id,
           email: result.data.googleLogin.user.email,
           fullname: result.data.googleLogin.user.fullname,
+          googleImage: result.data.googleLogin.user.googleImage,
         });
         toast.success("Signed in with Google successfully", {
           position: "bottom-right",

@@ -53,6 +53,7 @@ type User {
   email: String!
   fullname: String!
   googleId: String
+  googleImage: String
   image: String
   updatedAt: DateTime!
 }

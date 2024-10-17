@@ -84,21 +84,20 @@ const Login = () => {
 
   const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
     try {
-      console.log("Google credential response:", credentialResponse);
       const result = await googleLoginMutation({
         variables: {
           token: credentialResponse.credential,
         },
       });
 
-      console.log("Google login mutation result:", result);
-
       if (result.data?.googleLogin.user) {
-        setUser({
+        const userData = {
           _id: result.data.googleLogin.user._id,
           email: result.data.googleLogin.user.email,
           fullname: result.data.googleLogin.user.fullname,
-        });
+          googleImage: result.data.googleLogin.user.googleImage,
+        };
+        setUser(userData);
         toast.success("Signed in with Google successfully", {
           position: "bottom-right",
           className: "dark:bg-gray-800 dark:text-white",

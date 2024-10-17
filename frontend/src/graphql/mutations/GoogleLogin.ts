@@ -7,6 +7,7 @@ export const GOOGLE_LOGIN = gql`
         _id
         email
         fullname
+        googleImage
       }
     }
   }

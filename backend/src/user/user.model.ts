@@ -41,6 +41,10 @@ export class User {
   @Field({ nullable: true })
   @Prop()
   googleId?: string;
+
+  @Field({ nullable: true })
+  @Prop()
+  googleImage?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
