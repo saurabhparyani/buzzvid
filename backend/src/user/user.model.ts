@@ -19,8 +19,8 @@ export class User {
   email: string;
 
   @HideField()
-  @Prop({ required: true })
-  password: string;
+  @Prop({ required: function() { return !this.googleId; } })
+  password?: string;
 
   @Field({ nullable: true })
   @Prop()
@@ -37,6 +37,10 @@ export class User {
   @Field(() => Date)
   @Prop({ default: Date.now })
   updatedAt: Date;
+
+  @Field({ nullable: true })
+  @Prop()
+  googleId?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

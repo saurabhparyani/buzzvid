@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link } from "@tanstack/react-router";
 import logo from "../assets/logo.png";
 import { Label } from "@/components/ui/label";
@@ -16,6 +15,8 @@ import { LoginUserMutation } from "@/gql/graphql";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { GOOGLE_LOGIN } from "@/graphql/mutations/GoogleLogin";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -37,8 +38,8 @@ const Login = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const [loginUser, { loading, error, data }] =
-    useMutation<LoginUserMutation>(LOGIN_USER);
+  const [loginUser, { loading }] = useMutation<LoginUserMutation>(LOGIN_USER);
+  const [googleLoginMutation] = useMutation(GOOGLE_LOGIN);
 
   const setUser = useUserStore((state) => state.setUser);
 
@@ -79,6 +80,40 @@ const Login = () => {
 
   const onSubmit = (data: LoginFormValues) => {
     handleLogin(data);
+  };
+
+  const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+    try {
+      console.log("Google credential response:", credentialResponse);
+      const result = await googleLoginMutation({
+        variables: {
+          token: credentialResponse.credential,
+        },
+      });
+
+      console.log("Google login mutation result:", result);
+
+      if (result.data?.googleLogin.user) {
+        setUser({
+          _id: result.data.googleLogin.user._id,
+          email: result.data.googleLogin.user.email,
+          fullname: result.data.googleLogin.user.fullname,
+        });
+        toast.success("Signed in with Google successfully", {
+          position: "bottom-right",
+          className: "dark:bg-gray-800 dark:text-white",
+        });
+        navigate({ to: "/feed" });
+      } else {
+        throw new Error("User data not received from server");
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("Google login failed. Please try again.", {
+        position: "bottom-right",
+        className: "dark:bg-gray-800 dark:text-white",
+      });
+    }
   };
 
   return (
@@ -162,6 +197,18 @@ const Login = () => {
                   {loading ? "Logging in..." : "Log In"}
                 </Button>
               </form>
+
+              <div className="flex justify-center mt-4">
+                <GoogleLogin
+                  theme="filled_black"
+                  shape="circle"
+                  width="100%"
+                  onSuccess={handleGoogleLogin}
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                />
+              </div>
 
               <div className="mt-4 text-center text-sm">
                 New to buzz?{" "}

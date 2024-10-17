@@ -8,15 +8,22 @@ import {ConfigService} from "@nestjs/config"
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { LoginDto, RegisterDto } from './dto';
+import { OAuth2Client } from 'google-auth-library';
 
 
 @Injectable()
 export class AuthService {
+    private client: OAuth2Client;
+
     constructor(
         @InjectModel(User.name) private userModel: Model<UserDocument>,
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
-    ) {}
+    ) {
+        const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
+        console.log('GOOGLE_CLIENT_ID:', clientId);
+        this.client = new OAuth2Client(clientId);
+    }
 
     async refreshToken(req: Request, res: Response): Promise<string> {
         const refreshToken = req.cookies['refresh_token'];
@@ -127,6 +134,38 @@ export class AuthService {
         response.clearCookie('refresh_token');
         return 'Successfully logged out';
     }
+
+    async googleLogin(token: string, response: Response) {
+        try {
+          console.log('Received token:', token);
+          const ticket = await this.client.verifyIdToken({
+            idToken: token,
+            audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
+          });
+          const payload = ticket.getPayload();
+          console.log('Verified payload:', payload);
+          if (!payload || !payload.email) {
+            throw new BadRequestException('Invalid Google token payload');
+          }
+          const email = payload.email;
+      
+          let user = await this.userModel.findOne({ email });
+      
+          if (!user) {
+            user = await this.userModel.create({
+              email,
+              fullname: payload.name || '',
+              googleId: payload.sub,
+            });
+          }
+      
+          return this.issueTokens(user, response);
+        } catch (error) {
+          console.error('Google login error:', error);
+          throw new BadRequestException('Invalid Google token: ' + error.message);
+        }
+      }
+    
 }
 
 

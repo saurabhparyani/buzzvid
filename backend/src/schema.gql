@@ -23,6 +23,7 @@ type LoginResponse {
 }
 
 type Mutation {
+  googleLogin(token: String!): LoginResponse!
   login(loginInput: LoginDto!): LoginResponse!
   logout: String!
   refreshToken: String!
@@ -51,6 +52,7 @@ type User {
   createdAt: DateTime!
   email: String!
   fullname: String!
+  googleId: String
   image: String
   updatedAt: DateTime!
 }

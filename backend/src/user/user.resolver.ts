@@ -57,6 +57,14 @@ export class UserResolver {
         }
     }
 
+    @Mutation(() => LoginResponse)
+    async googleLogin(
+        @Args('token') token: string,
+        @Context() context: { res: Response },
+        ): Promise<LoginResponse> {
+            return this.authService.googleLogin(token, context.res);
+    }
+
     @Query(() => String)
     async hello() {
         return 'Hello World';
