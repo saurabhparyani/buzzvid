@@ -4,7 +4,7 @@ import "./index.css";
 import GoogleOAuthProviderWrapper from "@/components/GoogleOAuthProviderWrapper";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "@/utils/apolloClient";
@@ -36,7 +36,7 @@ createRoot(document.getElementById("root")!).render(
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
           <Toaster />
-          <ReactQueryDevtools />
+          {/* <ReactQueryDevtools /> */}
         </QueryClientProvider>
       </ApolloProvider>
     </GoogleOAuthProviderWrapper>

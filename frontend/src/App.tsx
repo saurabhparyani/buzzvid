@@ -1,22 +1,14 @@
 import ShimmerButton from "./components/ui/shimmer-button";
 import { TextGenerateEffect } from "./components/ui/text-generate-effect";
 import { Link } from "@tanstack/react-router";
-// import { useAuthRedirect } from "./hooks/useAuthRedirect";
 import Particles from "./components/ui/particles";
-// import { useTheme } from "./hooks/useTheme";
 
 function App() {
-  // const { isLoading } = useAuthRedirect("/");
-  // const { theme } = useTheme();
-
-  // if (isLoading) return <div>Loading...</div>;
-
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       <Particles
         className="absolute inset-0 -z-10 animate-fade-in"
         quantity={100}
-        // color={theme === "dark" ? "#ffffff" : "#000000"} // Set color based on theme
         color="#ffffff"
       />
       <div className="flex-grow flex items-center justify-center">

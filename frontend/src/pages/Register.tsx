@@ -17,6 +17,7 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { GOOGLE_LOGIN } from "@/graphql/mutations/GoogleLogin";
+import { useDummyLogin } from "@/hooks/useDummyLogin";
 
 const registerSchema = z
   .object({
@@ -38,6 +39,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordValue, setPasswordValue] = useState("");
   const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
+  const dummyLogin = useDummyLogin();
 
   const {
     register,
@@ -130,7 +132,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex lg:-mt-24">
       <div className="flex-1 flex items-center justify-center">
         <div className="max-w-2xl w-full px-6">
           <div className="flex justify-center mb-6">
@@ -147,13 +149,24 @@ const Register = () => {
             <p className="text-muted-foreground">
               Create an account to join the hive
             </p>
+            <div className="border-t-2 border-muted-foreground w-1/2 mx-auto my-2">
+              <p className="text-muted-foreground mt-2">
+                or{" "}
+                <button
+                  onClick={dummyLogin}
+                  className="text-foreground underline underline-offset-2 hover:scale-105 mx-2 cursor-pointer"
+                >
+                  Use a dummy account
+                </button>
+              </p>
+            </div>
           </div>
 
           <Card className="mx-auto max-w-full">
             <CardHeader></CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-                <div className="grid gap-2">
+                <div className="grid gap-2 -mt-6">
                   <Label htmlFor="fullname">Full name</Label>
                   <Input
                     id="fullname"

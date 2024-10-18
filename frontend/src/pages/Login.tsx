@@ -17,6 +17,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { GOOGLE_LOGIN } from "@/graphql/mutations/GoogleLogin";
+import { useDummyLogin } from "@/hooks/useDummyLogin";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -29,6 +30,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [passwordValue, setPasswordValue] = useState("");
+  const dummyLogin = useDummyLogin();
 
   const {
     register,
@@ -116,7 +118,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex lg:-mt-24">
       <div className="hidden lg:block flex-1">
         <img
           src="https://images.unsplash.com/photo-1617195737496-bc30194e3a19?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
@@ -140,13 +142,24 @@ const Login = () => {
             <p className="text-muted-foreground">
               Sign in to your account to continue
             </p>
+            <div className="border-t-2 border-muted-foreground w-1/2 mx-auto my-2">
+              <p className="text-muted-foreground mt-2">
+                or{" "}
+                <button
+                  onClick={dummyLogin}
+                  className="text-foreground underline underline-offset-2 hover:scale-105 mx-2 cursor-pointer"
+                >
+                  Use a dummy account
+                </button>
+              </p>
+            </div>
           </div>
 
           <Card className="mx-auto max-w-full">
             <CardHeader></CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-                <div className="grid gap-2">
+                <div className="grid gap-2 -mt-6">
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"

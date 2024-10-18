@@ -23,6 +23,12 @@ import { Route as IndexImport } from './routes/index'
 const AuthenticatedUploadLazyImport = createFileRoute(
   '/_authenticated/upload',
 )()
+const AuthenticatedSuggestedLazyImport = createFileRoute(
+  '/_authenticated/suggested',
+)()
+const AuthenticatedFollowingLazyImport = createFileRoute(
+  '/_authenticated/following',
+)()
 const AuthenticatedFeedLazyImport = createFileRoute('/_authenticated/feed')()
 const AuthenticatedProfileIdLazyImport = createFileRoute(
   '/_authenticated/profile/$id',
@@ -58,6 +64,24 @@ const AuthenticatedUploadLazyRoute = AuthenticatedUploadLazyImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any).lazy(() =>
   import('./routes/_authenticated/upload.lazy').then((d) => d.Route),
+)
+
+const AuthenticatedSuggestedLazyRoute = AuthenticatedSuggestedLazyImport.update(
+  {
+    path: '/suggested',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any,
+).lazy(() =>
+  import('./routes/_authenticated/suggested.lazy').then((d) => d.Route),
+)
+
+const AuthenticatedFollowingLazyRoute = AuthenticatedFollowingLazyImport.update(
+  {
+    path: '/following',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any,
+).lazy(() =>
+  import('./routes/_authenticated/following.lazy').then((d) => d.Route),
 )
 
 const AuthenticatedFeedLazyRoute = AuthenticatedFeedLazyImport.update({
@@ -122,6 +146,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeedLazyImport
       parentRoute: typeof AuthenticatedImport
     }
+    '/_authenticated/following': {
+      id: '/_authenticated/following'
+      path: '/following'
+      fullPath: '/following'
+      preLoaderRoute: typeof AuthenticatedFollowingLazyImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/suggested': {
+      id: '/_authenticated/suggested'
+      path: '/suggested'
+      fullPath: '/suggested'
+      preLoaderRoute: typeof AuthenticatedSuggestedLazyImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/_authenticated/upload': {
       id: '/_authenticated/upload'
       path: '/upload'
@@ -150,6 +188,8 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedFeedLazyRoute: typeof AuthenticatedFeedLazyRoute
+  AuthenticatedFollowingLazyRoute: typeof AuthenticatedFollowingLazyRoute
+  AuthenticatedSuggestedLazyRoute: typeof AuthenticatedSuggestedLazyRoute
   AuthenticatedUploadLazyRoute: typeof AuthenticatedUploadLazyRoute
   AuthenticatedPostIdLazyRoute: typeof AuthenticatedPostIdLazyRoute
   AuthenticatedProfileIdLazyRoute: typeof AuthenticatedProfileIdLazyRoute
@@ -157,6 +197,8 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedFeedLazyRoute: AuthenticatedFeedLazyRoute,
+  AuthenticatedFollowingLazyRoute: AuthenticatedFollowingLazyRoute,
+  AuthenticatedSuggestedLazyRoute: AuthenticatedSuggestedLazyRoute,
   AuthenticatedUploadLazyRoute: AuthenticatedUploadLazyRoute,
   AuthenticatedPostIdLazyRoute: AuthenticatedPostIdLazyRoute,
   AuthenticatedProfileIdLazyRoute: AuthenticatedProfileIdLazyRoute,
@@ -172,6 +214,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/feed': typeof AuthenticatedFeedLazyRoute
+  '/following': typeof AuthenticatedFollowingLazyRoute
+  '/suggested': typeof AuthenticatedSuggestedLazyRoute
   '/upload': typeof AuthenticatedUploadLazyRoute
   '/post/$id': typeof AuthenticatedPostIdLazyRoute
   '/profile/$id': typeof AuthenticatedProfileIdLazyRoute
@@ -183,6 +227,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/feed': typeof AuthenticatedFeedLazyRoute
+  '/following': typeof AuthenticatedFollowingLazyRoute
+  '/suggested': typeof AuthenticatedSuggestedLazyRoute
   '/upload': typeof AuthenticatedUploadLazyRoute
   '/post/$id': typeof AuthenticatedPostIdLazyRoute
   '/profile/$id': typeof AuthenticatedProfileIdLazyRoute
@@ -195,6 +241,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_authenticated/feed': typeof AuthenticatedFeedLazyRoute
+  '/_authenticated/following': typeof AuthenticatedFollowingLazyRoute
+  '/_authenticated/suggested': typeof AuthenticatedSuggestedLazyRoute
   '/_authenticated/upload': typeof AuthenticatedUploadLazyRoute
   '/_authenticated/post/$id': typeof AuthenticatedPostIdLazyRoute
   '/_authenticated/profile/$id': typeof AuthenticatedProfileIdLazyRoute
@@ -208,6 +256,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/feed'
+    | '/following'
+    | '/suggested'
     | '/upload'
     | '/post/$id'
     | '/profile/$id'
@@ -218,6 +268,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/feed'
+    | '/following'
+    | '/suggested'
     | '/upload'
     | '/post/$id'
     | '/profile/$id'
@@ -228,6 +280,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_authenticated/feed'
+    | '/_authenticated/following'
+    | '/_authenticated/suggested'
     | '/_authenticated/upload'
     | '/_authenticated/post/$id'
     | '/_authenticated/profile/$id'
@@ -273,6 +327,8 @@ export const routeTree = rootRoute
       "filePath": "_authenticated.tsx",
       "children": [
         "/_authenticated/feed",
+        "/_authenticated/following",
+        "/_authenticated/suggested",
         "/_authenticated/upload",
         "/_authenticated/post/$id",
         "/_authenticated/profile/$id"
@@ -286,6 +342,14 @@ export const routeTree = rootRoute
     },
     "/_authenticated/feed": {
       "filePath": "_authenticated/feed.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/following": {
+      "filePath": "_authenticated/following.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/suggested": {
+      "filePath": "_authenticated/suggested.lazy.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/upload": {
