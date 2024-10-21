@@ -12,7 +12,7 @@ export const useLogout = () => {
     try {
       await logoutUser();
       setUser({
-        _id: "",
+        id: "",
         fullname: "",
         email: "",
         bio: "",

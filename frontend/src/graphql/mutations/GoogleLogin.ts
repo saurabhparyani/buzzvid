@@ -4,7 +4,7 @@ export const GOOGLE_LOGIN = gql`
   mutation GoogleLogin($token: String!) {
     googleLogin(token: $token) {
       user {
-        _id
+        id
         email
         fullname
         googleImage

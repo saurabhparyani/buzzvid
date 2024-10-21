@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface SuggestedUserCardProps {
-  user: User;
+  user: Omit<User, "password">;
 }
 
 const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ user }) => {
@@ -22,7 +22,7 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ user }) => {
           </Avatar>
           <div className="flex-1 min-w-0">
             <Link
-              to={`/profile/${user._id}`}
+              to={`/profile/${user.id}`}
               className="font-semibold hover:underline block truncate"
             >
               {user.fullname}

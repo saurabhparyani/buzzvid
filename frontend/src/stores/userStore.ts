@@ -3,7 +3,7 @@ import { create } from "zustand"
 import { persist, devtools } from "zustand/middleware"
 
 export interface User {
-  _id?: string
+  id?: string
   fullname: string
   email?: string
   bio?: string
@@ -20,7 +20,7 @@ export const useUserStore = create<User & UserActions>()(
   devtools(
     persist(
       (set) => ({
-        _id: "",
+        id: "",
         fullname: "",
         email: "",
         bio: "",
@@ -29,7 +29,7 @@ export const useUserStore = create<User & UserActions>()(
 
         setUser: (user) => set(user),
         logout: () => {
-          set({ _id: "", fullname: "", email: "", bio: "", image: "", googleImage: "" })
+          set({ id: "", fullname: "", email: "", bio: "", image: "", googleImage: "" })
         },
       }),
       {

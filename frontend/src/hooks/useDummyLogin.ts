@@ -21,7 +21,7 @@ export const useDummyLogin = () => {
 
       if (result.data?.login.user) {
         setUser({
-          _id: result.data.login.user._id,
+          id: result.data.login.user.id,
           email: result.data.login.user.email,
           fullname: result.data.login.user.fullname,
         });

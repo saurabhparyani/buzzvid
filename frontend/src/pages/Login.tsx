@@ -56,7 +56,6 @@ const Login = () => {
 
       if (result.data?.login.user) {
         setUser({
-          _id: result.data.login.user._id,
           email: result.data.login.user.email,
           fullname: result.data.login.user.fullname,
         });
@@ -94,12 +93,13 @@ const Login = () => {
 
       if (result.data?.googleLogin.user) {
         const userData = {
-          _id: result.data.googleLogin.user._id,
+          id: result.data.googleLogin.user.id,
           email: result.data.googleLogin.user.email,
           fullname: result.data.googleLogin.user.fullname,
           googleImage: result.data.googleLogin.user.googleImage,
         };
         setUser(userData);
+        console.log("User data set after Google login:", userData); // Add this line for debugging
         toast.success("Signed in with Google successfully", {
           position: "bottom-right",
           className: "dark:bg-gray-800 dark:text-white",

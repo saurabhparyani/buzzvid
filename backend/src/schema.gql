@@ -48,13 +48,14 @@ type RegisterResponse {
 }
 
 type User {
-  _id: String!
   bio: String
   createdAt: DateTime!
   email: String!
   fullname: String!
   googleId: String
   googleImage: String
+  id: Float!
   image: String
+  password: String!
   updatedAt: DateTime!
 }

@@ -42,7 +42,7 @@ const NavMenu = () => {
           />
           <Search className="text-gray-500 dark:text-gray-400 w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-primary dark:hover:text-primary-dark transition-colors" />
         </div>
-        <div className="items-center space-x-4 hidden sm:flex">
+        <div className="items-center space-x-4 hidden lg:flex">
           <Link
             to="/upload"
             className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-dark transition-colors duration-200 hover:scale-105"
@@ -55,8 +55,8 @@ const NavMenu = () => {
             </div>
           </Link>
         </div>
-        <div className="hidden sm:block">
-          {user._id && (
+        <div className="hidden lg:block">
+          {user.id && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer hover:ring-2 hover:ring-primary dark:hover:ring-primary-dark transition-all duration-300">
@@ -78,7 +78,7 @@ const NavMenu = () => {
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
                   <Link
-                    to={`/profile/${user._id}`}
+                    to={`/profile/${user.id}`}
                     className="flex items-center"
                   >
                     <User className="mr-2 h-4 w-4" />

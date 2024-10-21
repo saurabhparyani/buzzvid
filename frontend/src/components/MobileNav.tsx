@@ -53,7 +53,7 @@ const MobileNav = () => {
         <PersonStanding size={24} className="min-w-[24px] min-h-[24px]" />
         <span className="text-xs mt-1 text-center">Suggested</span>
       </Link>
-      {user._id && (
+      {user.id && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div
@@ -65,7 +65,7 @@ const MobileNav = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem>
-              <Link to={`/profile/${user._id}`} className="flex items-center">
+              <Link to={`/profile/${user.id}`} className="flex items-center">
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </Link>

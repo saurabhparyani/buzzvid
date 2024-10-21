@@ -4,7 +4,7 @@ export const LOGIN_USER = gql`
     login(loginInput: { email: $email, password: $password }) {
       user {
         email
-        _id
+        id
         fullname
       }
     }

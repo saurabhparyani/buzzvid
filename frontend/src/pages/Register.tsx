@@ -69,7 +69,6 @@ const Register = () => {
 
       if (result.data?.register.user) {
         setUser({
-          _id: result.data.register.user._id,
           email: result.data.register.user.email,
           fullname: result.data.register.user.fullname,
         });
@@ -109,7 +108,7 @@ const Register = () => {
 
       if (result.data?.googleLogin.user) {
         setUser({
-          _id: result.data.googleLogin.user._id,
+          id: result.data.googleLogin.user.id,
           email: result.data.googleLogin.user.email,
           fullname: result.data.googleLogin.user.fullname,
           googleImage: result.data.googleLogin.user.googleImage,

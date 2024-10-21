@@ -11,7 +11,7 @@ const SideNav = () => {
   const { suggestedAccounts, loading, error } = useGetSuggestedAccounts();
 
   return (
-    <nav className="flex flex-col items-start justify-center py-8 px-4 sm:ml-20 sm:space-y-8">
+    <nav className="flex flex-col items-start py-8 px-4 sm:ml-20 sm:space-y-8 h-full overflow-hidden">
       <div className="hidden sm:flex sm:flex-col sm:w-full sm:space-y-8">
         <Link
           to="/feed"
@@ -35,12 +35,12 @@ const SideNav = () => {
           <h3 className="text-sm text-muted-foreground font-base mb-4 whitespace-nowrap">
             Suggested accounts
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-y-auto max-h-[calc(100vh-300px)]">
             {!loading &&
               !error &&
               suggestedAccounts.slice(0, 3).map((account) => (
                 <div
-                  key={account._id}
+                  key={account.id}
                   className="flex items-center space-x-4 whitespace-nowrap"
                 >
                   <Avatar className="w-7 h-7 flex justify-center items-center flex-shrink-0 rounded-full dark:bg-[#18181B] bg-gray-200 ">
@@ -53,9 +53,9 @@ const SideNav = () => {
                       {account.fullname.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <Link
-                      to={`/profile/${account._id}`}
+                      to={`/profile/${account.id}`}
                       className="block truncate hover:underline hover:underline-offset-4 hover:text-red-500 transition-all duration-300"
                     >
                       {account.fullname}

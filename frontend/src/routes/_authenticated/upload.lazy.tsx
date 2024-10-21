@@ -1,6 +1,8 @@
-import Upload from '@/pages/Upload'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { lazy } from "react";
+import { createLazyFileRoute } from "@tanstack/react-router";
 
-export const Route = createLazyFileRoute('/_authenticated/upload')({
+const Upload = lazy(() => import("@/pages/Upload"));
+
+export const Route = createLazyFileRoute("/_authenticated/upload")({
   component: Upload,
-})
+});

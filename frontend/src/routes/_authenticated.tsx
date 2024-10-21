@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
   beforeLoad: () => {
     const user = useUserStore.getState();
-    if (!user._id) {
+    if (!user.id) {
       throw redirect({
         to: "/register",
       });
