@@ -80,6 +80,7 @@ const uploadLink = createUploadLink({
   credentials: "include",
   headers: {
     "apollo-require-preflight": "true",
+    "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
   },
 });
 

@@ -1,11 +1,11 @@
-// import { gql } from "@apollo/client"
+import { gql } from "@apollo/client"
 
-// export const CREATE_POST = gql`
-//   mutation CreatePost($text: String!, $video: Upload!) {
-//     createPost(text: $text, video: $video) {
-//       _id
-//       text
-//       video
-//     }
-//   }
-// `
+export const CREATE_POST = gql`
+  mutation CreatePost($text: String!, $video: Upload!) {
+    createPost(text: $text, video: $video) {
+      id
+      text
+      video
+    }
+  }
+`

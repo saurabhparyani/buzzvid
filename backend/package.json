@@ -29,6 +29,7 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/serve-static": "^4.0.2",
     "@prisma/client": "^5.21.1",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",

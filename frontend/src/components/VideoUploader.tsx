@@ -47,7 +47,7 @@ const VideoUploader = ({ onFileChange }: VideoUploaderProps) => {
         ref={fileInputRef}
         type="file"
         onChange={handleFileChange}
-        accept="video/*"
+        accept="video/mp4"
         className="hidden"
       />
       <IconUpload className="w-12 h-12 text-gray-400" />

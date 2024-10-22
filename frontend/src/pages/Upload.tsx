@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useRef, useEffect } from "react";
+import { useState, Suspense, useRef, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "@/graphql/mutations/CreatePost";
 import { toast } from "react-hot-toast";
@@ -8,8 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
 import mobileCaseImage from "@/assets/mobile-case.png";
 import { Pause, Play } from "lucide-react";
-
-const VideoUploader = lazy(() => import("@/components/VideoUploader"));
+import VideoUploader from "@/components/VideoUploader";
 
 const Upload = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -57,6 +56,9 @@ const Upload = () => {
       return;
     }
 
+    console.log("File:", file);
+    console.log("Caption:", caption);
+
     try {
       const result = await createPost({
         variables: {
@@ -97,7 +99,11 @@ const Upload = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-1/2 space-y-6">
-            <Suspense fallback={<Spinner />}>
+            <Suspense
+              fallback={
+                <Spinner className="flex items-center justify-center" />
+              }
+            >
               {file ? (
                 <div className="space-y-4">
                   <Button
@@ -161,16 +167,18 @@ const Upload = () => {
                     <source src={videoPreviewUrl} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
-                  <button
-                    onClick={togglePlayPause}
-                    className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 rounded-full p-2 transition-opacity duration-300 hover:bg-opacity-75"
-                  >
-                    {isPlaying ? (
-                      <Pause className="w-6 h-6 text-white" />
-                    ) : (
-                      <Play className="w-6 h-6 text-white" />
-                    )}
-                  </button>
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+                    <button
+                      onClick={togglePlayPause}
+                      className="bg-transparent bg-opacity-50 rounded-full p-2 transition-opacity duration-300 hover:bg-black/75"
+                    >
+                      {isPlaying ? (
+                        <Pause className="w-6 h-6 text-white" />
+                      ) : (
+                        <Play className="w-6 h-6 text-white" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

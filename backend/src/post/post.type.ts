@@ -1,11 +1,11 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { LikeType } from 'src/like/like.type';
 import { User } from 'src/user/user.model';
 
 @ObjectType()
 export class PostType {
-  @Field(() => ID)
-  _id: string;
+  @Field(() => Int)
+  id: number;
 
   @Field()
   text: string;
@@ -25,6 +25,6 @@ export class PostType {
 
 @ObjectType()
 export class PostDetails extends PostType {
-  @Field(() => [String], { nullable: true })
-  otherPostIds?: string[];
+  @Field(() => [Number], { nullable: true })
+  otherPostIds?: number[];
 }

@@ -11,6 +11,7 @@ import { PrismaService } from '../prisma.service';
 import { createWriteStream, ReadStream } from 'fs';
 import { PostDetails, PostType } from './post.type';
 import { CreatePostDto } from './create-post.dto';
+import { Post } from '@prisma/client';
 
 @Injectable()
 export class PostService {
@@ -43,32 +44,60 @@ export class PostService {
         return videoPath;
       }
 
-        // async createPost(data: CreatePostDto):Promise<Post> {
-        //   return await this.prisma.post.create(data)
-        // }
+      async createPost(data: CreatePostDto):Promise<Post> {
+          return await this.prisma.post.create({
+            data: data
+          })
+      }
 
-      // async getPostsById(id: string): Promise<PostDetails> {
-      //   try {
-      //     const post = await this.postModel.findById(id).populate('user').populate('likes').lean();
-      //     if (!post) {
-      //       throw new NotFoundException('Post not found');
-      //     }
-      //     const otherPosts = await this.postModel.find({ user: post.user.id, _id: { $ne: id } }).lean();
-      //     const otherPostIds = otherPosts.map(post => post._id.toString());
-      
-      //     return {
-      //       ...post,
-      //       _id: post._id.toString(),
-      //       otherPostIds,
-      //       likes: post.likes.map(like => ({
-      //         id: like._id?.toString(),
-      //         userId: like.user?.id?.toString() || like.user?.id?.toString(),
-      //         postId: like.post?.id?.toString() || like.post?.id?.toString()
-      //       }))
-      //     };
-      //   } catch (error) {
-      //     throw new NotFoundException('Post not found');
-      //   }
-      // }
+      async getPostById(id: number): Promise<PostDetails> {
+        try {
+          const post = await this.prisma.post.findUnique({
+            where: {id},
+            include: {
+              user:true,
+              likes:true,
+              comments:true
+            }
+          })
 
+          const postIds = await this.prisma.post.findMany({
+            where: {userId: post.userId},
+            select: {id: true}
+          })
+
+          return {...post,otherPostIds: postIds.map((post) => post.id)}
+          
+        } catch (error) {
+          throw new NotFoundException(error.message);
+        }
+      }
+
+      async getPosts(skip:number,take:number):Promise<PostType[]> {
+        return await this.prisma.post.findMany({
+          skip,
+          take,
+          include: {user:true,likes:true,comments:true},
+          orderBy: {createdAt: 'desc'}
+        })
+      }
+
+      async getPostsByUserId(userId:number):Promise<PostType[]> {
+        return await this.prisma.post.findMany({
+          where: {userId},
+          include: {user:true},
+        })
+      }
+
+      async deletePost(id: number): Promise<void> {
+        const post = await this.getPostById(id);
+        try {
+          const fs = await import('fs');
+          fs.unlinkSync(`public${post.video}`);
+        } catch (err) {
+          throw new BadRequestException(err.message);
+        }
+    
+        await this.prisma.post.delete({ where: { id } });
+      }
 }
