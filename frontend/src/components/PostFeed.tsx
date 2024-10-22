@@ -61,7 +61,7 @@ const PostFeed: React.FC<PostFeedProps> = ({
             </Avatar>
             <span className="font-semibold">{user.fullname}</span>
           </Link>
-          {user.id !== currentUser.id && (
+          {user.id !== Number(currentUser.id) && (
             <Button variant="outline" size="sm">
               <UserPlus className="mr-2 -mt-1 h-4 w-4" /> Follow
             </Button>

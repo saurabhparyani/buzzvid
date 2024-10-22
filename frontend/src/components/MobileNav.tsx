@@ -24,7 +24,7 @@ const MobileNav = () => {
   const handleLogout = useLogout();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-background border-t border-gray-200 dark:border-gray-800 flex justify-around items-center py-4 z-50">
+    <div className="mobile-nav fixed bottom-0 left-0 right-0 lg:hidden bg-background border-t border-gray-200 dark:border-gray-800 flex justify-around items-center py-4 z-50">
       <Link
         to="/feed"
         className={`flex flex-col items-center w-1/5 ${isFeedActive ? "text-red-500" : ""}`}
