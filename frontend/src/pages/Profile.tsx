@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
-import { useParams, Link } from "@tanstack/react-router";
+import { useParams } from "@tanstack/react-router";
 import { useQuery } from "@apollo/client";
 import { GET_POSTS_BY_USER_ID } from "@/graphql/queries/GetPostsByUserId";
 import { GET_USERS } from "@/graphql/queries/GetUsers";
@@ -10,17 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Spinner } from "@/components/ui/spinner";
 import { useUserStore } from "@/stores/userStore";
 import PostProfile from "@/components/PostProfile";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import EditProfileModal from "@/components/EditProfileModal";
 
 interface User {
   id: number;
@@ -38,12 +28,13 @@ interface Post {
 
 const Profile = () => {
   const { id } = useParams({ from: "/_authenticated/profile/$id" });
-  const [activeTab, setActiveTab] = useState("videos");
+  const [_, setActiveTab] = useState("videos");
   const loggedInUserId = useUserStore((state) => state.id);
-  console.log("loggedInUserId", loggedInUserId);
-  console.log("id", id);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
-  const { data: userData, loading: userLoading } = useQuery(GET_USERS);
+  const { data: userData, loading: userLoading } = useQuery(GET_USERS, {
+    variables: { userId: parseInt(id as string) },
+  });
   const { data: postsData, loading: postsLoading } = useQuery(
     GET_POSTS_BY_USER_ID,
     {
@@ -56,6 +47,7 @@ const Profile = () => {
   const user = userData?.getUsers.find((user: User) => user.id == Number(id));
   const posts = postsData?.getPostsByUserId || [];
 
+  console.log(user);
   if (!user) return <div>User not found</div>;
 
   return (
@@ -65,6 +57,7 @@ const Profile = () => {
           <AvatarImage
             src={user.googleImage || user.image}
             alt={user.fullname}
+            className="object-contain"
           />
           <AvatarFallback>{user.fullname[0]}</AvatarFallback>
         </Avatar>
@@ -75,47 +68,20 @@ const Profile = () => {
             <Button className="mt-2">Follow</Button>
           )}
           {id !== undefined && id == loggedInUserId && (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="mt-2">
-                  Edit Profile
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Edit profile</DialogTitle>
-                  <DialogDescription>
-                    Make changes to your profile here. Click save when you're
-                    done.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
-                    </Label>
-                    <Input
-                      id="name"
-                      value={user.fullname}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="email" className="text-right">
-                      Email
-                    </Label>
-                    <Input
-                      id="email"
-                      value={user.email}
-                      className="col-span-3"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <>
+              <Button
+                variant="outline"
+                className="mt-2"
+                onClick={() => setIsEditProfileOpen(true)}
+              >
+                Edit Profile
+              </Button>
+              <EditProfileModal
+                isOpen={isEditProfileOpen}
+                onClose={() => setIsEditProfileOpen(false)}
+                user={user}
+              />
+            </>
           )}
           <div className="flex justify-center md:justify-start space-x-4 mt-4">
             <div>

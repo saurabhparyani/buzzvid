@@ -11,6 +11,9 @@ import { PostModule } from './post/post.module';
 import { LikeModule } from './like/like.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { CommentModule } from './comment/comment.module';
+import { UserService } from './user/user.service';
+import { PrismaService } from './prisma.service';
+import { UserResolver } from './user/user.resolver';
 
 @Module({
   imports: [
@@ -35,6 +38,6 @@ import { CommentModule } from './comment/comment.module';
     CommentModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,UserResolver, UserService, PrismaService],
 })
 export class AppModule {}

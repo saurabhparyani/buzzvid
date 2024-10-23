@@ -75,15 +75,19 @@ const NavMenu = () => {
           {user.id && (
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer hover:ring-2 hover:ring-primary dark:hover:ring-primary-dark transition-all duration-300">
+                <Avatar className="cursor-pointer hover:ring-2 hover:ring-primary dark:hover:ring-primary-dark transition-all duration-300 w-9 h-9 rounded-full">
                   {user.googleImage ? (
                     <AvatarImage
-                      className="object-cover rounded-full"
+                      className="object-contain"
                       src={user.googleImage}
                       alt={user.fullname}
                     />
                   ) : user.image ? (
-                    <AvatarImage src={user.image} alt={user.fullname} />
+                    <AvatarImage
+                      src={user.image}
+                      alt={user.fullname}
+                      className="object-contain"
+                    />
                   ) : (
                     <AvatarFallback className="bg-gray-200 dark:bg-gray-900">
                       <User className="h-5 w-5 text-gray-700 dark:text-gray-300" />

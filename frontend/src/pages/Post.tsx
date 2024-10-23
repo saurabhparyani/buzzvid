@@ -59,7 +59,7 @@ const Post = () => {
 
   const {
     data: commentsData,
-    loading: loadingComments,
+    loading: _,
     refetch: refetchComments,
   } = useQuery<GetCommentsByPostIdQuery>(GET_COMMENTS_BY_POST_ID, {
     variables: { postId: Number(id) },
@@ -412,13 +412,14 @@ const Post = () => {
         {/* Desktop only: Comments and Interactions Section */}
         <CardContent className="w-96 hidden lg:flex flex-col">
           <div className="flex items-center mt-12 space-x-4 mb-4">
-            <Avatar>
+            <Avatar className="w-9 h-9 object-contain">
               <AvatarImage
                 src={
                   dataPost.getPostById.user.image ||
                   dataPost.getPostById.user.googleImage
                 }
                 alt={post?.user.fullname}
+                className="object-contain"
               />
               <AvatarFallback>{post?.user.fullname.charAt(0)}</AvatarFallback>
             </Avatar>
@@ -433,9 +434,11 @@ const Post = () => {
                 {new Date(post?.createdAt).toLocaleString()}
               </p>
             </div>
-            <Button variant="outline" size="sm">
-              Follow
-            </Button>
+            {post?.user.id !== Number(loggedInUserId) && (
+              <Button variant="outline" size="sm">
+                Follow
+              </Button>
+            )}
           </div>
           <p className="mb-4 text-xl font-medium">{post?.text}</p>
           <div className="flex items-center space-x-4 mb-4">

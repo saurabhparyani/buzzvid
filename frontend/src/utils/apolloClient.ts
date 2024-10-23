@@ -38,6 +38,15 @@ async function refreshToken(client: ApolloClient<NormalizedCacheObject>) {
 let retryCount = 0;
 const maxRetry = 3;
 
+const uploadLink = createUploadLink({
+  uri: "http://localhost:3000/graphql",
+  credentials: "include",
+  headers: {
+    "apollo-require-preflight": "true",
+    "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
+  },
+});
+
 const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   const operationName = operation.operationName;
   console.log(operationName, "operationName");
@@ -58,9 +67,6 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
             bio: '',
           })
         }
-
-
-
 
         retryCount++;
 
@@ -93,14 +99,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 //   },
 // });
 
-const uploadLink = createUploadLink({
-  uri: "http://localhost:3000/graphql",
-  credentials: "include",
-  headers: {
-    "apollo-require-preflight": "true",
-    "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
-  },
-});
+
 
 export const client = new ApolloClient({
   uri: "http://localhost:3000/graphql",

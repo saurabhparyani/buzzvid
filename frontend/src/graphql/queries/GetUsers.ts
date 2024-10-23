@@ -4,6 +4,7 @@ export const GET_USERS = gql`
     query GetUsers {
         getUsers {
             id
+            bio
             fullname
             email
             image

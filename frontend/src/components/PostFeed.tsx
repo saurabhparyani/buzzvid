@@ -43,6 +43,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ id, user, text, video }) => {
               <AvatarImage
                 src={user.googleImage || user.image}
                 alt={user.fullname}
+                className="object-contain"
               />
               <AvatarFallback>{user.fullname[0]}</AvatarFallback>
             </Avatar>
@@ -60,7 +61,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ id, user, text, video }) => {
         <video
           ref={videoRef}
           src={`${import.meta.env.VITE_API_URL}${video}`}
-          className="w-full h-96"
+          className="w-full h-64"
           loop
           muted={isMuted}
           autoPlay
@@ -71,9 +72,9 @@ const PostFeed: React.FC<PostFeedProps> = ({ id, user, text, video }) => {
           className="absolute bottom-4 right-4 bg-black bg-opacity-50 p-2 rounded-full"
         >
           {isMuted ? (
-            <VolumeX className="h-6 w-6 text-white" />
+            <VolumeX className="h-4 w-4 text-white" />
           ) : (
-            <Volume2 className="h-6 w-6 text-white" />
+            <Volume2 className="h-4 w-4 text-white" />
           )}
         </button>
       </div>
