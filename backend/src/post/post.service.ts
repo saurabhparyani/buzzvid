@@ -82,11 +82,19 @@ export class PostService {
         })
       }
 
-      async getPostsByUserId(userId:number):Promise<PostType[]> {
-        return await this.prisma.post.findMany({
-          where: {userId},
-          include: {user:true},
-        })
+      async getPostsByUserId(userId: number): Promise<PostType[]> {
+        const posts = await this.prisma.post.findMany({
+          where: { userId },
+          include: {
+            user: true,
+            likes: true,
+          },
+        });
+      
+        return posts.map(post => ({
+          ...post,
+          likesCount: post.likes.length,
+        }));
       }
 
       async deletePost(id: number): Promise<void> {
@@ -99,5 +107,24 @@ export class PostService {
         }
     
         await this.prisma.post.delete({ where: { id } });
+      }
+
+      async getLikedPostsByUserId(userId: number): Promise<PostType[]> {
+        const likedPosts = await this.prisma.like.findMany({
+          where: { userId },
+          include: {
+            post: {
+              include: {
+                user: true,
+                likes: true,
+              },
+            },
+          },
+        });
+      
+        return likedPosts.map(like => ({
+          ...like.post,
+          likesCount: like.post.likes.length,
+        }));
       }
 }

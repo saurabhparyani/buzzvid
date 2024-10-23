@@ -21,6 +21,14 @@ type ErrorType {
   message: String!
 }
 
+type Follower {
+  email: String!
+  fullname: String!
+  googleImage: String
+  id: Float!
+  image: String
+}
+
 type LikeType {
   id: Int!
   postId: Int!
@@ -42,12 +50,14 @@ type Mutation {
   createPost(text: String!, video: Upload!): PostType!
   deleteComment(id: Float!): Comment!
   deletePost(id: Float!): PostType!
+  followUser(followingId: Float!): User!
   googleLogin(token: String!): LoginResponse!
   likePost(postId: Float!): LikeType!
   login(loginInput: LoginDto!): LoginResponse!
   logout: String!
   refreshToken: String!
   register(registerInput: RegisterDto!): RegisterResponse!
+  unfollowUser(followingId: Float!): User!
   unlikePost(postId: Float!): LikeType
   updateGoogleProfile(bio: String, fullname: String, googleImage: Upload): User!
   updateProfile(bio: String, fullname: String, image: Upload): User!
@@ -57,6 +67,7 @@ type PostDetails {
   createdAt: DateTime!
   id: Int!
   likes: [LikeType!]
+  likesCount: Int!
   otherPostIds: [Float!]
   text: String!
   user: User!
@@ -67,6 +78,7 @@ type PostType {
   createdAt: DateTime!
   id: Int!
   likes: [LikeType!]
+  likesCount: Int!
   text: String!
   user: User!
   video: String
@@ -74,11 +86,16 @@ type PostType {
 
 type Query {
   getCommentsByPostId(postId: Float!): [Comment!]!
+  getFollowers(userId: Int!): [Follower!]!
+  getFollowing(userId: Int!): [User!]!
+  getLikedPostsByUserId(userId: Float!): [PostType!]!
   getPostById(id: Float!): PostDetails!
   getPosts(skip: Int! = 0, take: Int! = 1): [PostType!]!
   getPostsByUserId(userId: Float!): [PostType!]!
   getUsers: [User!]!
   hello: String!
+  isFollowing(followingId: Float!): Boolean!
+  searchUsers(searchTerm: String!): [User!]!
 }
 
 input RegisterDto {

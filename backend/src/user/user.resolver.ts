@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { RegisterResponse, LoginResponse } from 'src/auth/types';
@@ -12,6 +12,7 @@ import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
 import { v4 as uuidv4 } from 'uuid';
 import { join } from 'path';
 import { createWriteStream } from 'fs';
+import { Follower } from './follower.model';
 
 @Resolver()
 export class UserResolver {
@@ -122,5 +123,58 @@ export class UserResolver {
         readStream.pipe(createWriteStream(imagePath));
 
         return imageUrl;
+    }
+
+    @Mutation(() => User)
+    @UseGuards(GraphqlAuthGuard)
+    async followUser(
+    @Args('followingId') followingId: number,
+    @Context() context,
+    ) {
+    const followerId = context.req.user.sub;
+    if (!followerId) {
+        throw new Error('User not authenticated');
+    }
+    return this.userService.followUser(followerId, followingId);
+    }
+
+    @Mutation(() => User)
+    @UseGuards(GraphqlAuthGuard)
+    async unfollowUser(
+        @Args('followingId') followingId: number,
+        @Context() context,
+    ) {
+        const followerId = context.req.user.sub;
+        return this.userService.unfollowUser(followerId, followingId);
+    }
+
+    @Query(() => Boolean)
+    @UseGuards(GraphqlAuthGuard)
+    async isFollowing(
+        @Args('followingId') followingId: number,
+        @Context() context,
+    ) {
+        const followerId = context.req.user.sub;
+        return this.userService.isFollowing(followerId, followingId);
+    }
+
+    @Query(() => [Follower], { name: 'getFollowers' })
+    @UseGuards(GraphqlAuthGuard)
+    async getFollowers(
+        @Args('userId', { type: () => Int }) userId: number): Promise<Follower[]> {
+        return this.userService.getFollowers(userId);
+    }
+
+    @Query(() => [User], { name: 'getFollowing' })
+    @UseGuards(GraphqlAuthGuard)
+    async getFollowing(
+    @Args('userId', { type: () => Int }) userId: number
+    ): Promise<User[]> {
+    return this.userService.getFollowing(userId);
+    }
+
+    @Query(() => [User])
+    async searchUsers(@Args('searchTerm') searchTerm: string) {
+    return this.userService.searchUsers(searchTerm);
     }
 }

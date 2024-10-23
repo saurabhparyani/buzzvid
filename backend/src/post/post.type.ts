@@ -21,6 +21,9 @@ export class PostType {
 
   @Field(() => [LikeType], { nullable: true })
   likes?: LikeType[];
+
+  @Field(() => Int)
+  likesCount?: number;
 }
 
 @ObjectType()

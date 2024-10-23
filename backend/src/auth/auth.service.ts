@@ -20,7 +20,6 @@ export class AuthService {
         private readonly configService: ConfigService,
     ) {
         const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
-        console.log('GOOGLE_CLIENT_ID:', clientId);
         this.client = new OAuth2Client(clientId);
     }
 

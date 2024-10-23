@@ -60,4 +60,9 @@ export class PostResolver {
     async getPostsByUserId(@Args('userId') userId: number) {
         return await this.postService.getPostsByUserId(userId);
     }
+
+    @Query(() => [PostType])
+    async getLikedPostsByUserId(@Args('userId') userId: number) {
+        return this.postService.getLikedPostsByUserId(userId);
+    }
 }
