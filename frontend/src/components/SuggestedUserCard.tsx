@@ -19,7 +19,7 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({
         <div className="flex items-center space-x-4 mb-4">
           <Avatar className="flex-shrink-0">
             <AvatarImage
-              src={user?.image || user?.googleImage || ""}
+              src={user?.googleImage || user?.image || ""}
               alt={user.fullname}
             />
             <AvatarFallback>{user.fullname.charAt(0)}</AvatarFallback>
