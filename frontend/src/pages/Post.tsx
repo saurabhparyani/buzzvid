@@ -38,6 +38,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "react-hot-toast";
+import { GET_POSTS_BY_USER_ID } from "@/graphql/queries/GetPostsByUserId";
+import { GET_LIKED_POSTS_BY_USER_ID } from "@/graphql/queries/GetLikedPostsByUserId";
 
 const Post = () => {
   const { id } = useParams({ from: "/_authenticated/post/$id" });
@@ -95,12 +97,32 @@ const Post = () => {
 
   const [likePostMutation] = useMutation(LIKE_POST, {
     variables: { postId: Number(id) },
-    refetchQueries: [{ query: GET_POST_BY_ID, variables: { id: Number(id) } }],
+    refetchQueries: [
+      { query: GET_POST_BY_ID, variables: { id: Number(id) } },
+      {
+        query: GET_POSTS_BY_USER_ID,
+        variables: { userId: Number(dataPost?.getPostById?.user.id) },
+      },
+      {
+        query: GET_LIKED_POSTS_BY_USER_ID,
+        variables: { userId: Number(loggedInUserId) },
+      },
+    ],
   });
 
   const [unlikePostMutation] = useMutation(UNLIKE_POST, {
     variables: { postId: Number(id) },
-    refetchQueries: [{ query: GET_POST_BY_ID, variables: { id: Number(id) } }],
+    refetchQueries: [
+      { query: GET_POST_BY_ID, variables: { id: Number(id) } },
+      {
+        query: GET_POSTS_BY_USER_ID,
+        variables: { userId: Number(dataPost?.getPostById?.user.id) },
+      },
+      {
+        query: GET_LIKED_POSTS_BY_USER_ID,
+        variables: { userId: Number(loggedInUserId) },
+      },
+    ],
   });
 
   const handleAddComment = async () => {
@@ -164,20 +186,20 @@ const Post = () => {
     }
   };
 
-  const loopThroughPosts = (direction: "up" | "down") => {
-    const otherPostIds = dataPost?.getPostById?.otherPostIds || [];
-    let newIndex =
-      direction === "up" ? currentPostIdIndex + 1 : currentPostIdIndex - 1;
+  // const loopThroughPosts = (direction: "up" | "down") => {
+  //   const otherPostIds = dataPost?.getPostById?.otherPostIds || [];
+  //   let newIndex =
+  //     direction === "up" ? currentPostIdIndex + 1 : currentPostIdIndex - 1;
 
-    if (newIndex < 0) {
-      newIndex = otherPostIds.length - 1;
-    } else if (newIndex >= otherPostIds.length) {
-      newIndex = 0;
-    }
+  //   if (newIndex < 0) {
+  //     newIndex = otherPostIds.length - 1;
+  //   } else if (newIndex >= otherPostIds.length) {
+  //     newIndex = 0;
+  //   }
 
-    setCurrentPostIdIndex(newIndex);
-    navigate({ to: "/post/$id", params: { id: otherPostIds[newIndex] } });
-  };
+  //   setCurrentPostIdIndex(newIndex);
+  //   navigate({ to: "/post/$id", params: { id: otherPostIds[newIndex] } });
+  // };
 
   useEffect(() => {
     const videoRef = video.current;
@@ -230,7 +252,7 @@ const Post = () => {
           </Link>
 
           {/* Desktop only: Navigation buttons */}
-          <div className="hidden lg:block">
+          {/* <div className="hidden lg:block">
             <Button
               variant="ghost"
               size="icon"
@@ -247,7 +269,7 @@ const Post = () => {
             >
               <ChevronDown className="h-6 w-6" />
             </Button>
-          </div>
+          </div> */}
 
           {/* Video player */}
           <div
@@ -348,8 +370,8 @@ const Post = () => {
                       <Avatar>
                         <AvatarImage
                           src={
-                            comment.user.image ||
                             comment.user.googleImage ||
+                            comment.user.image ||
                             undefined
                           }
                           alt={comment.user.fullname}
@@ -415,8 +437,8 @@ const Post = () => {
             <Avatar className="w-9 h-9 object-contain">
               <AvatarImage
                 src={
-                  dataPost.getPostById.user.image ||
-                  dataPost.getPostById.user.googleImage
+                  dataPost.getPostById.user.googleImage ||
+                  dataPost.getPostById.user.image
                 }
                 alt={post?.user.fullname}
                 className="object-contain"
@@ -469,8 +491,8 @@ const Post = () => {
                 <Avatar>
                   <AvatarImage
                     src={
-                      comment.user.image ||
                       comment.user.googleImage ||
+                      comment.user.image ||
                       undefined
                     }
                     alt={comment.user.fullname}

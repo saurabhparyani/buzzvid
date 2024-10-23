@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
-import { UserPlus, Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import { useUserStore } from "@/stores/userStore";
+import FollowButton from "./FollowButton";
 
 interface PostFeedProps {
   id: number;
@@ -50,9 +50,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ id, user, text, video }) => {
             <span className="font-semibold">{user.fullname}</span>
           </Link>
           {user.id !== Number(currentUser.id) && (
-            <Button variant="outline" size="sm">
-              <UserPlus className="mr-2 -mt-1 h-4 w-4" /> Follow
-            </Button>
+            <FollowButton userId={user.id} />
           )}
         </div>
         <p className="mb-4">{text}</p>

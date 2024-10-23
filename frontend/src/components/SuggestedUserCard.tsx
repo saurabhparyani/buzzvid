@@ -2,13 +2,17 @@ import { Link } from "@tanstack/react-router";
 import { User } from "@/gql/graphql";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import FollowButton from "./FollowButton";
 
 interface SuggestedUserCardProps {
   user: Omit<User, "password">;
+  showFollowButton?: boolean;
 }
 
-const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ user }) => {
+const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({
+  user,
+  showFollowButton = true,
+}) => {
   return (
     <Card className="h-full flex flex-col relative z-0">
       <CardContent className="p-4 flex flex-col flex-grow">
@@ -32,7 +36,7 @@ const SuggestedUserCard: React.FC<SuggestedUserCardProps> = ({ user }) => {
             </p>
           </div>
         </div>
-        <Button className="w-full mt-auto">Follow</Button>
+        {showFollowButton && <FollowButton userId={user.id} />}
       </CardContent>
     </Card>
   );

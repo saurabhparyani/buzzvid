@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link } from "@tanstack/react-router";
 import { useUserStore } from "@/stores/userStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Upload, Search } from "lucide-react";
+import { UserIcon, Upload, Search } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,25 +13,50 @@ import {
 import { LogOut } from "lucide-react";
 import { useLogout } from "@/hooks/useLogout";
 import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useLazyQuery } from "@apollo/client";
+import { SEARCH_USERS } from "@/graphql/queries/SearchUsers";
+import { User } from "@/gql/graphql";
 
 const NavMenu = () => {
   const user = useUserStore((state) => state);
   const handleLogout = useLogout();
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+
+  const [searchUsers, { loading }] = useLazyQuery(SEARCH_USERS, {
+    onCompleted: (data) => {
+      setSearchResults(data.searchUsers);
+    },
+  });
+
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      searchUsers({ variables: { searchTerm: debouncedSearchTerm } });
+    } else {
+      setSearchResults([]);
+    }
+  }, [debouncedSearchTerm, searchUsers]);
 
   useEffect(() => {
     const handleRouteChange = () => {
       setIsOpen(false);
+      setSearchTerm("");
+      setSearchResults([]);
     };
 
-    // Add event listener for route changes
     window.addEventListener("popstate", handleRouteChange);
 
-    // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener("popstate", handleRouteChange);
     };
   }, []);
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <nav className="bg-background border-b border-gray-200 dark:border-gray-800 p-4 flex justify-between items-center shadow-sm">
@@ -50,14 +76,48 @@ const NavMenu = () => {
         </Link>
       </div>
       <div className="flex items-center space-x-6 mr-14">
-        <div className="flex items-center bg-gray-100 dark:bg-[#2A2A2A] p-2 rounded-full max-w-[480px] w-full transition-all duration-300 focus-within:ring-2 focus-within:ring-primary dark:focus-within:ring-primary-dark">
+        <div className="relative flex items-center bg-gray-100 dark:bg-[#2A2A2A] p-2 rounded-full max-w-[480px] w-full transition-all duration-300 focus-within:ring-2 focus-within:ring-primary dark:focus-within:ring-primary-dark">
           <input
             type="text"
+            value={searchTerm}
+            onChange={handleSearchInputChange}
             placeholder="Search Accounts"
             className="pl-2 pr-1 py-1 bg-transparent placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white text-xs sm:text-sm focus:outline-none w-full lg:w-[400px]"
           />
           <Search className="text-gray-500 dark:text-gray-400 w-4 h-4 sm:w-5 sm:h-5 cursor-pointer hover:text-primary dark:hover:text-primary-dark transition-colors" />
+          {searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-950 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto w-full sm:w-auto sm:min-w-[300px]">
+              {searchResults.map((user) => (
+                <Link
+                  key={user.id}
+                  to={`/profile/${user.id}`}
+                  className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSearchResults([]);
+                  }}
+                >
+                  <Avatar className="w-6 h-6 sm:w-8 sm:h-8 mr-2 flex-shrink-0">
+                    <AvatarImage
+                      src={user.googleImage || user.image || ""}
+                      alt={user.fullname}
+                    />
+                    <AvatarFallback>{user.fullname.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-grow min-w-0">
+                    <p className="font-semibold text-sm sm:text-base truncate">
+                      {user.fullname}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
+        {/* Rest of the component remains the same */}
         <div className="items-center space-x-4 hidden lg:flex">
           <Link
             to="/upload"
@@ -90,7 +150,7 @@ const NavMenu = () => {
                     />
                   ) : (
                     <AvatarFallback className="bg-gray-200 dark:bg-gray-900">
-                      <User className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                      <UserIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                     </AvatarFallback>
                   )}
                 </Avatar>
@@ -102,7 +162,7 @@ const NavMenu = () => {
                     className="flex items-center"
                     onClick={() => setIsOpen(false)}
                   >
-                    <User className="mr-2 h-4 w-4" />
+                    <UserIcon className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>

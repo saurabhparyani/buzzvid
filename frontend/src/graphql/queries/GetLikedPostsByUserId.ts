@@ -1,7 +1,8 @@
 import { gql } from "@apollo/client"
-export const GET_POSTS_BY_USER_ID = gql`
-  query getPostsByUserId($userId: Float!) {
-    getPostsByUserId(userId: $userId) {
+
+export const GET_LIKED_POSTS_BY_USER_ID = gql`
+  query getLikedPostsByUserId($userId: Float!) {
+    getLikedPostsByUserId(userId: $userId) {
       id
       text
       video

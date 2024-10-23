@@ -11,6 +11,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { useUserStore } from "@/stores/userStore";
 import PostProfile from "@/components/PostProfile";
 import EditProfileModal from "@/components/EditProfileModal";
+import FollowButton from "@/components/FollowButton";
+import { GET_FOLLOWERS } from "@/graphql/queries/GetFollowers";
+import { GET_LIKED_POSTS_BY_USER_ID } from "@/graphql/queries/GetLikedPostsByUserId";
 
 interface User {
   id: number;
@@ -24,11 +27,20 @@ interface User {
 interface Post {
   id: number;
   video: string;
+  likesCount: number;
+}
+
+interface Follower {
+  id: number;
+  fullname: string;
+  email: string;
+  image?: string;
+  googleImage?: string;
 }
 
 const Profile = () => {
   const { id } = useParams({ from: "/_authenticated/profile/$id" });
-  const [_, setActiveTab] = useState("videos");
+  const [activeTab, setActiveTab] = useState("videos");
   const loggedInUserId = useUserStore((state) => state.id);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
@@ -42,10 +54,37 @@ const Profile = () => {
     }
   );
 
-  if (userLoading || postsLoading) return <Spinner />;
+  const { data: likedPostsData, loading: likedPostsLoading } = useQuery(
+    GET_LIKED_POSTS_BY_USER_ID,
+    {
+      variables: { userId: Number(id) },
+    }
+  );
+
+  const {
+    data: followersData,
+    loading: followersLoading,
+    error: followersError,
+  } = useQuery(GET_FOLLOWERS, {
+    variables: { userId: Number(id) },
+  });
+
+  if (userLoading || postsLoading || followersLoading || likedPostsLoading)
+    return <Spinner />;
+
+  if (followersError) {
+    console.error("GetFollowers query error:", followersError);
+    return <div>Error loading followers</div>;
+  }
 
   const user = userData?.getUsers.find((user: User) => user.id == Number(id));
   const posts = postsData?.getPostsByUserId || [];
+  const followers: Follower[] = followersData?.getFollowers || [];
+
+  const totalLikes = posts.reduce(
+    (sum: number, post: Post) => sum + post.likesCount,
+    0
+  );
 
   console.log(user);
   if (!user) return <div>User not found</div>;
@@ -63,9 +102,11 @@ const Profile = () => {
         </Avatar>
         <div className="md:ml-8 mt-4 md:mt-0 text-center md:text-left">
           <h1 className="text-2xl font-bold">{user.fullname}</h1>
-          <p className="text-muted-foreground">{user.email}</p>
+          <p className="text-muted-foreground mt-1 mb-4">{user.email}</p>
           {id !== undefined && id != loggedInUserId && (
-            <Button className="mt-2">Follow</Button>
+            <div className="mt-2">
+              <FollowButton userId={Number(id)} />
+            </div>
           )}
           {id !== undefined && id == loggedInUserId && (
             <>
@@ -84,11 +125,11 @@ const Profile = () => {
             </>
           )}
           <div className="flex justify-center md:justify-start space-x-4 mt-4">
-            <div>
-              <span className="font-bold">0</span> Following
+            <div className="flex items-center gap-1">
+              <span className="font-bold">{followers.length}</span> Followers
             </div>
-            <div>
-              <span className="font-bold">0</span> Likes
+            <div className="flex items-center gap-1">
+              <span className="font-bold">{totalLikes}</span> Likes
             </div>
           </div>
         </div>
@@ -117,8 +158,9 @@ const Profile = () => {
         </TabsContent>
         <TabsContent value="liked">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {/* Add liked posts here when implemented */}
-            <p>Liked videos will be displayed here</p>
+            {likedPostsData?.getLikedPostsByUserId.map((post: Post) => (
+              <PostProfile key={post.id} post={post} />
+            ))}
           </div>
         </TabsContent>
       </Tabs>

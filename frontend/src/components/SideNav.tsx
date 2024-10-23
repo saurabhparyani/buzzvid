@@ -46,7 +46,7 @@ const SideNav = () => {
                   >
                     <Avatar className="w-7 h-7 flex justify-center items-center flex-shrink-0 rounded-full dark:bg-[#18181B] bg-gray-200 ">
                       <AvatarImage
-                        src={account.image || account.googleImage || ""}
+                        src={account.googleImage || account.image || ""}
                         alt={account.fullname}
                         className="rounded-full w-7 h-7 object-contain"
                       />
