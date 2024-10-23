@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "@tanstack/react-router";
+import { useParams, Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@apollo/client";
 import { GET_POST_BY_ID } from "../graphql/queries/GetPostById";
 import { GET_COMMENTS_BY_POST_ID } from "../graphql/queries/GetCommentsByPostId";
@@ -16,16 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  X,
-  ChevronUp,
-  ChevronDown,
-  Heart,
-  MessageCircle,
-  Trash2,
-  Play,
-  Pause,
-} from "lucide-react";
+import { X, Heart, MessageCircle, Trash2, Play, Pause } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,9 +34,7 @@ import { GET_LIKED_POSTS_BY_USER_ID } from "@/graphql/queries/GetLikedPostsByUse
 
 const Post = () => {
   const { id } = useParams({ from: "/_authenticated/post/$id" });
-  const navigate = useNavigate();
   const [comment, setComment] = useState("");
-  const [currentPostIdIndex, setCurrentPostIdIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

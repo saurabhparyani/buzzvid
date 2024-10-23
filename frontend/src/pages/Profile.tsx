@@ -40,7 +40,7 @@ interface Follower {
 
 const Profile = () => {
   const { id } = useParams({ from: "/_authenticated/profile/$id" });
-  const [activeTab, setActiveTab] = useState("videos");
+  const [_, setActiveTab] = useState("videos");
   const loggedInUserId = useUserStore((state) => state.id);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 

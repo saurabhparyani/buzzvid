@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Link } from "@tanstack/react-router";
 import { useUserStore } from "@/stores/userStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,7 +25,7 @@ const NavMenu = () => {
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const [searchUsers, { loading }] = useLazyQuery(SEARCH_USERS, {
+  const [searchUsers] = useLazyQuery(SEARCH_USERS, {
     onCompleted: (data) => {
       setSearchResults(data.searchUsers);
     },

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client";
@@ -34,7 +33,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ userId }) => {
 
   const [followUser] = useMutation(FOLLOW_USER, {
     variables: { followingId: userId },
-    update: (cache, { data: { followUser } }) => {
+    update: (cache) => {
       cache.writeQuery({
         query: IS_FOLLOWING,
         variables: { followingId: userId },
@@ -58,7 +57,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ userId }) => {
 
   const [unfollowUser] = useMutation(UNFOLLOW_USER, {
     variables: { followingId: userId },
-    update: (cache, { data: { unfollowUser } }) => {
+    update: (cache) => {
       cache.writeQuery({
         query: IS_FOLLOWING,
         variables: { followingId: userId },
