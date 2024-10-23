@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 const documents = {
-    "\n  mutation CreateComment($text: String!, $postId: Float!) {\n    createComment(text: $text, postId: $postId) {\n      text\n      id\n      createdAt\n      user {\n        id\n        fullname\n        email\n      }\n      post {\n        id\n        text\n        video\n      }\n    }\n  }\n": types.CreateCommentDocument,
+    "\n  mutation CreateComment($text: String!, $postId: Float!) {\n    createComment(text: $text, postId: $postId) {\n      text\n      id\n      createdAt\n      user {\n        id\n        fullname\n        email\n        image\n        googleImage\n      }\n      post {\n        id\n        text\n        video\n      }\n    }\n  }\n": types.CreateCommentDocument,
     "\n  mutation CreatePost($text: String!, $video: Upload!) {\n    createPost(text: $text, video: $video) {\n      id\n      text\n      video\n    }\n  }\n": types.CreatePostDocument,
     "\n  mutation DeleteComment($id: Float!) {\n    deleteComment(id: $id) {\n      id\n      __typename\n    }\n  }\n": types.DeleteCommentDocument,
     "\n  mutation GoogleLogin($token: String!) {\n    googleLogin(token: $token) {\n      user {\n        id\n        email\n        fullname\n        googleImage\n      }\n    }\n  }\n": types.GoogleLoginDocument,
@@ -26,7 +26,7 @@ const documents = {
     "\n  query GetCommentsByPostId($postId: Float!) {\n    getCommentsByPostId(postId: $postId) {\n      id\n      text\n      createdAt\n      user {\n        id\n        fullname\n        email\n        image\n        googleImage\n      }\n      post {\n        id\n        text\n        video\n      }\n    }\n  }\n": types.GetCommentsByPostIdDocument,
     "\n  query GetPostById($id: Float!) {\n    getPostById(id: $id) {\n      id\n      text\n      video\n      createdAt\n      user {\n        id\n        email\n        fullname\n        image\n        googleImage\n      }\n      likes {\n        id\n        userId\n        postId\n      }\n      otherPostIds\n    }\n  }\n": types.GetPostByIdDocument,
     "\n  query GetPosts($skip: Int!, $take: Int!) {\n    getPosts(skip: $skip, take: $take) {\n      id\n      text\n      video\n      user {\n        id\n        fullname\n        email\n        image\n        googleImage\n      }\n      likes {\n        id\n        userId\n        postId\n      }\n    }\n  }\n": types.GetPostsDocument,
-    "\n  query getPostsByUserId($userId: Float!) {\n    getPostsByUserId(userId: $userId) {\n      id\n      text\n      video\n      user {\n        fullname\n        email\n        id\n      }\n    }\n  }\n": types.GetPostsByUserIdDocument,
+    "\n  query getPostsByUserId($userId: Float!) {\n    getPostsByUserId(userId: $userId) {\n      id\n      text\n      video\n      user {\n        fullname\n        email\n        id\n        image\n        googleImage\n      }\n    }\n  }\n": types.GetPostsByUserIdDocument,
     "\n    query GetUsers {\n        getUsers {\n            id\n            fullname\n            email\n            image\n            googleImage\n        }\n    }\n\n": types.GetUsersDocument,
 };
 
@@ -47,7 +47,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation CreateComment($text: String!, $postId: Float!) {\n    createComment(text: $text, postId: $postId) {\n      text\n      id\n      createdAt\n      user {\n        id\n        fullname\n        email\n      }\n      post {\n        id\n        text\n        video\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateComment($text: String!, $postId: Float!) {\n    createComment(text: $text, postId: $postId) {\n      text\n      id\n      createdAt\n      user {\n        id\n        fullname\n        email\n      }\n      post {\n        id\n        text\n        video\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  mutation CreateComment($text: String!, $postId: Float!) {\n    createComment(text: $text, postId: $postId) {\n      text\n      id\n      createdAt\n      user {\n        id\n        fullname\n        email\n        image\n        googleImage\n      }\n      post {\n        id\n        text\n        video\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation CreateComment($text: String!, $postId: Float!) {\n    createComment(text: $text, postId: $postId) {\n      text\n      id\n      createdAt\n      user {\n        id\n        fullname\n        email\n        image\n        googleImage\n      }\n      post {\n        id\n        text\n        video\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -95,7 +95,7 @@ export function graphql(source: "\n  query GetPosts($skip: Int!, $take: Int!) {\
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query getPostsByUserId($userId: Float!) {\n    getPostsByUserId(userId: $userId) {\n      id\n      text\n      video\n      user {\n        fullname\n        email\n        id\n      }\n    }\n  }\n"): (typeof documents)["\n  query getPostsByUserId($userId: Float!) {\n    getPostsByUserId(userId: $userId) {\n      id\n      text\n      video\n      user {\n        fullname\n        email\n        id\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query getPostsByUserId($userId: Float!) {\n    getPostsByUserId(userId: $userId) {\n      id\n      text\n      video\n      user {\n        fullname\n        email\n        id\n        image\n        googleImage\n      }\n    }\n  }\n"): (typeof documents)["\n  query getPostsByUserId($userId: Float!) {\n    getPostsByUserId(userId: $userId) {\n      id\n      text\n      video\n      user {\n        fullname\n        email\n        id\n        image\n        googleImage\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

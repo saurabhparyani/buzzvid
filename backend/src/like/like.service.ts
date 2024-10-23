@@ -11,8 +11,17 @@ export class LikeService {
   }
 
   async unlikePost(postId: number, userId: number) {
-    return this.prisma.like.delete({
+    const like = await this.prisma.like.findUnique({
       where: { userId_postId: { postId, userId } },
     });
+
+    if (like) {
+      return this.prisma.like.delete({
+        where: { userId_postId: { postId, userId } },
+      });
+    }
+
+    // If the like doesn't exist, we can either return null or throw a custom error
+    return null;
   }
 }

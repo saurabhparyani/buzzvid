@@ -37,6 +37,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "react-hot-toast";
 
 const Post = () => {
   const { id } = useParams({ from: "/_authenticated/post/$id" });
@@ -56,21 +57,24 @@ const Post = () => {
     variables: { id: Number(id) },
   });
 
-  const { data: commentsData, loading: loadingComments } =
-    useQuery<GetCommentsByPostIdQuery>(GET_COMMENTS_BY_POST_ID, {
-      variables: { postId: Number(id) },
-    });
+  const {
+    data: commentsData,
+    loading: loadingComments,
+    refetch: refetchComments,
+  } = useQuery<GetCommentsByPostIdQuery>(GET_COMMENTS_BY_POST_ID, {
+    variables: { postId: Number(id) },
+  });
 
-  const [createComment] = useMutation(CREATE_COMMENT, {
+  const [createCommentMutation] = useMutation(CREATE_COMMENT, {
     refetchQueries: [
       {
         query: GET_COMMENTS_BY_POST_ID,
-        variables: { postId: Number(id), text: comment },
+        variables: { postId: Number(id) },
       },
     ],
   });
 
-  const [deleteComment] = useMutation(DELETE_COMMENT, {
+  const [deleteCommentMutation] = useMutation(DELETE_COMMENT, {
     update(cache, { data: { deleteComment } }) {
       const existingComments = cache.readQuery<GetCommentsByPostIdQuery>({
         query: GET_COMMENTS_BY_POST_ID,
@@ -101,18 +105,33 @@ const Post = () => {
 
   const handleAddComment = async () => {
     if (comment.trim()) {
-      await createComment({ variables: { postId: Number(id), text: comment } });
-      setComment("");
+      try {
+        await createCommentMutation({
+          variables: { postId: Number(id), text: comment },
+        });
+        setComment("");
+        await refetchComments();
+        toast.success("Comment added successfully!");
+      } catch (error) {
+        toast.error("Failed to add comment. Please try again.");
+      }
     }
   };
 
   const handleDeleteComment = async (commentId: number) => {
-    await deleteComment({ variables: { id: commentId } });
+    try {
+      await deleteCommentMutation({ variables: { id: commentId } });
+      await refetchComments();
+      toast.success("Comment deleted successfully!");
+    } catch (error) {
+      toast.error("Failed to delete comment. Please try again.");
+    }
   };
 
   const handleLikePost = async () => {
-    if (loggedInUserId === dataPost?.getPostById?.user.id) return;
+    if (loggedInUserId == dataPost?.getPostById?.user.id) return;
     await likePostMutation();
+    console.log("Liked post");
     likePost({
       id: Number(id),
       userId: Number(loggedInUserId),
@@ -121,14 +140,17 @@ const Post = () => {
   };
 
   const handleUnlikePost = async () => {
-    if (loggedInUserId === dataPost?.getPostById?.user.id) return;
+    if (loggedInUserId == dataPost?.getPostById?.user.id) return;
     await unlikePostMutation();
+    console.log("Unliked post");
     removeLike(Number(id));
   };
 
   const isLiked = likedPosts.some((likedPost) => {
-    if (!likedPost) return false;
-    return likedPost?.userId === Number(loggedInUserId);
+    if (likedPost.postId == Number(id)) {
+      if (!likedPost) return false;
+      return likedPost?.userId == Number(loggedInUserId);
+    }
   });
 
   const toggleVideoPlay = () => {
@@ -272,7 +294,7 @@ const Post = () => {
                 variant="ghost"
                 size="sm"
                 className="text-white disabled:text-muted-foreground"
-                disabled={dataPost?.getPostById?.user.id === loggedInUserId}
+                disabled={dataPost?.getPostById?.user.id == loggedInUserId}
                 onClick={isLiked ? handleUnlikePost : handleLikePost}
               >
                 <Heart className={`h-6 w-6 ${isLiked ? "fill-red-500" : ""}`} />
@@ -313,7 +335,7 @@ const Post = () => {
                 </Button>
               </div>
               <div className="flex-grow overflow-y-auto">
-                {commentsData?.getCommentsByPostId.length === 0 ? (
+                {commentsData?.getCommentsByPostId.length == 0 ? (
                   <p className="text-center text-muted-foreground">
                     No comments
                   </p>
@@ -324,6 +346,14 @@ const Post = () => {
                       className="flex items-start space-x-2 mb-2"
                     >
                       <Avatar>
+                        <AvatarImage
+                          src={
+                            comment.user.image ||
+                            comment.user.googleImage ||
+                            undefined
+                          }
+                          alt={comment.user.fullname}
+                        />
                         <AvatarFallback>
                           {comment.user.fullname?.charAt(0)}
                         </AvatarFallback>
@@ -334,7 +364,7 @@ const Post = () => {
                         </p>
                         <p className="text-sm">{comment.text}</p>
                       </div>
-                      {comment.user.id === Number(loggedInUserId) && (
+                      {comment.user.id == Number(loggedInUserId) && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="sm">
@@ -413,7 +443,7 @@ const Post = () => {
               variant="ghost"
               size="sm"
               className="text-white disabled:text-muted-foreground"
-              disabled={dataPost?.getPostById?.user.id === loggedInUserId}
+              disabled={dataPost?.getPostById?.user.id == loggedInUserId}
               onClick={isLiked ? handleUnlikePost : handleLikePost}
             >
               <Heart
@@ -452,7 +482,7 @@ const Post = () => {
                   </p>
                   <p className="text-sm">{comment.text}</p>
                 </div>
-                {comment.user.id === Number(loggedInUserId) && (
+                {comment.user.id == Number(loggedInUserId) && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="ghost" size="sm">

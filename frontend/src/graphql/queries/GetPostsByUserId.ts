@@ -9,6 +9,8 @@ export const GET_POSTS_BY_USER_ID = gql`
         fullname
         email
         id
+        image
+        googleImage
       }
     }
   }

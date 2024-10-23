@@ -11,10 +11,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut } from "lucide-react";
 import { useLogout } from "@/hooks/useLogout";
+import { useEffect, useState } from "react";
 
 const NavMenu = () => {
   const user = useUserStore((state) => state);
   const handleLogout = useLogout();
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setIsOpen(false);
+    };
+
+    // Add event listener for route changes
+    window.addEventListener("popstate", handleRouteChange);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("popstate", handleRouteChange);
+    };
+  }, []);
 
   return (
     <nav className="bg-background border-b border-gray-200 dark:border-gray-800 p-4 flex justify-between items-center shadow-sm">
@@ -57,7 +73,7 @@ const NavMenu = () => {
         </div>
         <div className="hidden lg:block">
           {user.id && (
-            <DropdownMenu>
+            <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger asChild>
                 <Avatar className="cursor-pointer hover:ring-2 hover:ring-primary dark:hover:ring-primary-dark transition-all duration-300">
                   {user.googleImage ? (
@@ -80,6 +96,7 @@ const NavMenu = () => {
                   <Link
                     to={`/profile/${user.id}`}
                     className="flex items-center"
+                    onClick={() => setIsOpen(false)}
                   >
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>

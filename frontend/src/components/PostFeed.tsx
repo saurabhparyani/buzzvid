@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-import { Heart, MessageCircle, UserPlus, Volume2, VolumeX } from "lucide-react";
+import { UserPlus, Volume2, VolumeX } from "lucide-react";
 import { useUserStore } from "@/stores/userStore";
 
 interface PostFeedProps {
@@ -19,16 +19,8 @@ interface PostFeedProps {
   comments: number;
 }
 
-const PostFeed: React.FC<PostFeedProps> = ({
-  id,
-  user,
-  text,
-  video,
-  likes,
-  comments,
-}) => {
+const PostFeed: React.FC<PostFeedProps> = ({ id, user, text, video }) => {
   const [isMuted, setIsMuted] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const currentUser = useUserStore((state) => state);
 
@@ -37,11 +29,6 @@ const PostFeed: React.FC<PostFeedProps> = ({
       videoRef.current.muted = !isMuted;
       setIsMuted(!isMuted);
     }
-  };
-
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-    // Here you would typically call an API to update the like status
   };
 
   return (
@@ -92,20 +79,10 @@ const PostFeed: React.FC<PostFeedProps> = ({
       </div>
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <button onClick={toggleLike} className="flex items-center space-x-2">
-            <Heart
-              className={`h-6 w-6 ${isLiked ? "text-red-500 fill-red-500" : "text-gray-500"}`}
-            />
-            <span className="pt-1">{likes + (isLiked ? 1 : 0)}</span>
-          </button>
-          <Link to={`/post/${id}`} className="flex items-center space-x-2">
-            <MessageCircle className="h-6 w-6 text-gray-500" />
-            <span className="pt-1">{comments}</span>
+          <Link to={`/post/${id}`} className="text-sm text-muted-foreground">
+            View post
           </Link>
         </div>
-        <Link to={`/post/${id}`} className="text-sm text-muted-foreground">
-          View all comments
-        </Link>
       </div>
     </div>
   );

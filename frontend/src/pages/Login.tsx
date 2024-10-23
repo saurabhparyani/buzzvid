@@ -56,6 +56,7 @@ const Login = () => {
 
       if (result.data?.login.user) {
         setUser({
+          id: result.data.login.user.id.toString(),
           email: result.data.login.user.email,
           fullname: result.data.login.user.fullname,
         });
@@ -214,7 +215,6 @@ const Login = () => {
                 <GoogleLogin
                   theme="filled_black"
                   shape="circle"
-                  width="100%"
                   onSuccess={handleGoogleLogin}
                   onError={() => {
                     console.log("Login Failed");

@@ -10,6 +10,8 @@ export const CREATE_COMMENT = gql`
         id
         fullname
         email
+        image
+        googleImage
       }
       post {
         id

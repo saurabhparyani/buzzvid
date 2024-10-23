@@ -21,11 +21,17 @@ export class LikeResolver {
     });
   }
 
-  @Mutation(() => LikeType)
+  @Mutation(() => LikeType, { nullable: true })
   async unlikePost(
     @Args('postId') postId: number,
     @Context() ctx: { req: Request },
   ) {
-    return this.likeService.unlikePost(postId, ctx.req.user.sub);
+    const result = await this.likeService.unlikePost(postId, ctx.req.user.sub);
+    if (!result) {
+      // You can choose to throw an error or return null
+      // throw new NotFoundException('Like not found');
+      return null;
+    }
+    return result;
   }
 }

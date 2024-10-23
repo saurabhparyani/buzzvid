@@ -52,7 +52,7 @@ const Feed = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {data?.getPosts.length === 0 ? (
+      {data?.getPosts.length == 0 ? (
         <p className="text-center text-gray-500 mt-8">No posts</p>
       ) : (
         data?.getPosts.map((post: Post) => (

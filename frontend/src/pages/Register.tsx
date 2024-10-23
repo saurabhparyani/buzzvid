@@ -69,6 +69,7 @@ const Register = () => {
 
       if (result.data?.register.user) {
         setUser({
+          id: result.data.register.user.id.toString(),
           email: result.data.register.user.email,
           fullname: result.data.register.user.fullname,
         });
@@ -268,7 +269,6 @@ const Register = () => {
                 <GoogleLogin
                   theme="filled_black"
                   shape="circle"
-                  width="100%"
                   onSuccess={handleGoogleLogin}
                   onError={() => {
                     console.log("Login Failed");

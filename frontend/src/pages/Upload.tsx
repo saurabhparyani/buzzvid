@@ -18,7 +18,16 @@ const Upload = () => {
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const [createPost, { loading }] = useMutation(CREATE_POST);
+  const [createPost, { loading }] = useMutation(CREATE_POST, {
+    onError: (err) => {
+      console.log("error", err);
+    },
+    variables: {
+      text: caption,
+      video: file,
+    },
+    refetchQueries: ["GetPosts"],
+  });
 
   const handleFileChange = (newFile: File) => {
     setFile(newFile);

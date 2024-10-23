@@ -48,7 +48,7 @@ type Mutation {
   logout: String!
   refreshToken: String!
   register(registerInput: RegisterDto!): RegisterResponse!
-  unlikePost(postId: Float!): LikeType!
+  unlikePost(postId: Float!): LikeType
 }
 
 type PostDetails {

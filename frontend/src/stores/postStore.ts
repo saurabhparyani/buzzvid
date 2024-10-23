@@ -1,12 +1,14 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
+
 type PostState = {
   likedPosts: Array<{
     id: number
     userId: number
     postId: number
   }>
+  comments: Comment[]
   likePost: (post: { id: number; userId: number; postId: number }) => void
   removeLike: (postId: number) => void
 }
@@ -15,6 +17,7 @@ export const usePostStore = create<PostState>()(
   persist(
     (set) => ({
       likedPosts: [],
+      comments: [],
       likePost: (post) => {
         set((state) => {
           console.log("likedPosts", state.likedPosts)
