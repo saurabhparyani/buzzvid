@@ -39,7 +39,7 @@ let retryCount = 0;
 const maxRetry = 3;
 
 const uploadLink = createUploadLink({
-  uri: "http://localhost:3000/graphql",
+  uri: "https://buzz-backend-bu05.onrender.com/graphql",
   credentials: "include",
   headers: {
     "apollo-require-preflight": "true",
@@ -92,7 +92,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 });
 
 // const httpLink = new HttpLink({
-//   uri: "http://localhost:3000/graphql",
+//   uri: "https://buzz-backend-bu05.onrender.com/graphql",
 //   credentials: "include",
 //   headers: {
 //     "apollo-require-preflight": "true",
@@ -102,7 +102,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 
 
 export const client = new ApolloClient({
-  uri: "http://localhost:3000/graphql",
+  uri: "https://buzz-backend-bu05.onrender.com/graphql",
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
