@@ -27,7 +27,7 @@ async function refreshToken(client: ApolloClient<NormalizedCacheObject>) {
     if (!newAccessToken) {
       throw new Error("New access token not received.");
     }
-    localStorage.setItem("accessToken", newAccessToken);
+    // localStorage.setItem("accessToken", newAccessToken);
     return `Bearer ${newAccessToken}`;
   } catch (err) {
     console.log(err);
@@ -43,7 +43,7 @@ const uploadLink = createUploadLink({
   credentials: "include",
   headers: {
     "apollo-require-preflight": "true",
-    "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
+    // "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
   },
 });
 
