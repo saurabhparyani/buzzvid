@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"pnpm run codegen\" \"vite dev\"",
-    "build": "pnpm run codegen && pnpm run generate-routes && tsc -b && vite build",
+    "build": "pnpm run build-backend && pnpm run codegen && pnpm run generate-routes && tsc -b && vite build",
+    "build-backend": "pnpm --filter backend run build",
     "lint": "eslint .",
     "codegen": "graphql-codegen --config codegen.ts",
     "preview": "vite preview",
