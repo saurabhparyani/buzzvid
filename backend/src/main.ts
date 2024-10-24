@@ -7,7 +7,7 @@ import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'https://buzz-ruby.vercel.app',
+    origin: ['https://buzz-ruby.vercel.app', 'http://localhost:5173'],
     credentials: true,
     allowedHeaders: [
       'Accept',

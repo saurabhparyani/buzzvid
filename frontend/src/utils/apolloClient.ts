@@ -5,16 +5,17 @@ import {
   gql,
   Observable,
   ApolloLink,
-  // HttpLink,
 } from "@apollo/client";
-
-import createUploadLink from "apollo-upload-client/createUploadLink.mjs"
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { onError } from "@apollo/client/link/error";
 import { useUserStore } from "@/stores/userStore";
 
-async function refreshToken(client: ApolloClient<NormalizedCacheObject>) {
+// eslint-disable-next-line prefer-const
+let apolloClient: ApolloClient<NormalizedCacheObject>;
+
+const refreshToken = async () => {
   try {
-    const { data } = await client.mutate({
+    const { data } = await apolloClient.mutate({
       mutation: gql`
         mutation RefreshToken {
           refreshToken
@@ -27,13 +28,14 @@ async function refreshToken(client: ApolloClient<NormalizedCacheObject>) {
     if (!newAccessToken) {
       throw new Error("New access token not received.");
     }
+    // Optionally store the token
     // localStorage.setItem("accessToken", newAccessToken);
     return `Bearer ${newAccessToken}`;
   } catch (err) {
     console.log(err);
     throw new Error("Error getting new access token.");
   }
-}
+};
 
 let retryCount = 0;
 const maxRetry = 3;
@@ -46,7 +48,6 @@ const uploadLink = createUploadLink({
   },
 });
 
-
 const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   const operationName = operation.operationName;
   console.log(operationName, "operationName");
@@ -54,24 +55,25 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   if (graphQLErrors) {
     for (const err of graphQLErrors) {
       if (err.extensions?.code === "UNAUTHENTICATED" && retryCount < maxRetry) {
-        console.log("refresh token not found", err.extensions)
+        console.log("refresh token not found", err.extensions);
         if (
-          (err.extensions.originalError as { message: string }).message === "Refresh token not found"
+          (err.extensions.originalError as { message: string }).message ===
+          "Refresh token not found"
         ) {
           useUserStore.setState({
             id: undefined,
-            fullname: '',
-            email: '',
-            image: '',
-            googleImage: '',
-            bio: '',
-          })
+            fullname: "",
+            email: "",
+            image: "",
+            googleImage: "",
+            bio: "",
+          });
         }
 
         retryCount++;
 
         return new Observable((observer) => {
-          refreshToken(client)
+          refreshToken()
             .then((token) => {
               console.log("token", token);
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -91,17 +93,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   }
 });
 
-// const httpLink = new HttpLink({
-//   uri: "https://buzz-backend-bu05.onrender.com/graphql",
-//   credentials: "include",
-//   headers: {
-//     "apollo-require-preflight": "true",
-//   },
-// });
-
-
-
-export const client = new ApolloClient({
+apolloClient = new ApolloClient({
   uri: "https://buzz-backend-bu05.onrender.com/graphql",
   cache: new InMemoryCache({
     typePolicies: {
@@ -123,3 +115,5 @@ export const client = new ApolloClient({
   },
   link: ApolloLink.from([errorLink, uploadLink]),
 });
+
+export const client = apolloClient;
