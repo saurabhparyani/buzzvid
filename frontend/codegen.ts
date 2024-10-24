@@ -1,7 +1,8 @@
 import { CodegenConfig } from "@graphql-codegen/cli"
+import path from "path"
 
 const config: CodegenConfig = {
-  schema: "https://buzz-backend-bu05.onrender.com/graphql",
+  schema: path.resolve(__dirname, "../backend/src/schema.gql"),
   documents: ["src/graphql/**/*.ts"],
   ignoreNoDocuments: true,
   generates: {
