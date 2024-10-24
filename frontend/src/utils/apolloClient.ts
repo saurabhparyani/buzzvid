@@ -43,9 +43,9 @@ const uploadLink = createUploadLink({
   credentials: "include",
   headers: {
     "apollo-require-preflight": "true",
-    // "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,
   },
 });
+
 
 const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   const operationName = operation.operationName;

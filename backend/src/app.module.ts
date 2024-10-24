@@ -14,6 +14,7 @@ import { CommentModule } from './comment/comment.module';
 import { UserService } from './user/user.service';
 import { PrismaService } from './prisma.service';
 import { UserResolver } from './user/user.resolver';
+import { S3Module } from './s3/s3.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { UserResolver } from './user/user.resolver';
     PostModule,
     LikeModule,
     CommentModule,
+    S3Module,
   ],
   controllers: [AppController],
   providers: [AppService,UserResolver, UserService, PrismaService],

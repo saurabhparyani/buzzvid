@@ -12,43 +12,57 @@ import { createWriteStream, ReadStream } from 'fs';
 import { PostDetails, PostType } from './post.type';
 import { CreatePostDto } from './create-post.dto';
 import { Post } from '@prisma/client';
+import { S3Service } from 'src/s3/s3.service';
+import { S3_BUCKET_NAME } from 'src/config/aws.config';
 
 @Injectable()
 export class PostService {
-    constructor(private prisma: PrismaService) {}
+    constructor(private prisma: PrismaService, private s3Service: S3Service) {}
     
-      async saveVideo(video: {
-        createReadStream: () => ReadStream;
-        filename: string;
-        mimetype: string;
-      }): Promise<string> {
-        if (!video || !['video/mp4'].includes(video.mimetype)) {
-            throw new BadRequestException(
-              'Invalid video file format. Only MP4 is allowed.',
-            );
-        }
-
-        const videoName = `${Date.now()}${extname(video.filename)}`;
-        const videoPath = `/files/${videoName}`;
-
-        const stream = video.createReadStream();
-        const outputPath = `public${videoPath}`;
-        const writeStream = createWriteStream(outputPath);
-        stream.pipe(writeStream);
-
-        await new Promise((resolve, reject) => {
-        stream.on('end', resolve);
+    async saveVideo(video: {
+      createReadStream: () => ReadStream;
+      filename: string;
+      mimetype: string;
+    }): Promise<string> {
+      if (!video || !['video/mp4'].includes(video.mimetype)) {
+        throw new BadRequestException(
+          'Invalid video file format. Only MP4 is allowed.',
+        );
+      }
+    
+      const { url, key } = await this.s3Service.getPresignedUrl(video.mimetype);
+    
+      const stream = video.createReadStream();
+      const buffer = await new Promise<Buffer>((resolve, reject) => {
+        const chunks: Buffer[] = [];
+        stream.on('data', (chunk) => chunks.push(chunk as Buffer));
+        stream.on('end', () => resolve(Buffer.concat(chunks)));
         stream.on('error', reject);
-        });
+      });
+    
+      await fetch(url, {
+        method: 'PUT',
+        body: buffer,
+        headers: { 'Content-Type': video.mimetype },
+      });
+    
+      return `https://${S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+    }
 
-        return videoPath;
-      }
-
-      async createPost(data: CreatePostDto):Promise<Post> {
-          return await this.prisma.post.create({
-            data: data
-          })
-      }
+    async createPost(data: CreatePostDto): Promise<Post> {
+      return this.prisma.post.create({
+        data: {
+          text: data.text,
+          video: data.video,
+          userId: data.userId,
+        },
+        include: {
+          user: true,
+          likes: true,
+          comments: true,
+        },
+      });
+    }
 
       async getPostById(id: number): Promise<PostDetails> {
         try {
@@ -99,13 +113,8 @@ export class PostService {
 
       async deletePost(id: number): Promise<void> {
         const post = await this.getPostById(id);
-        try {
-          const fs = await import('fs');
-          fs.unlinkSync(`public${post.video}`);
-        } catch (err) {
-          throw new BadRequestException(err.message);
-        }
-    
+        const key = post.video.split('/').pop();
+        await this.s3Service.deleteFile(`videos/${key}`);
         await this.prisma.post.delete({ where: { id } });
       }
 

@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Volume2, VolumeX } from "lucide-react";
 import { useUserStore } from "@/stores/userStore";
 import FollowButton from "./FollowButton";
+import { getVideoUrl } from "@/utils/getVideoUrl";
 
 interface PostFeedProps {
   id: number;
@@ -58,7 +59,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ id, user, text, video }) => {
       <div className="relative">
         <video
           ref={videoRef}
-          src={`${import.meta.env.VITE_API_URL}${video}`}
+          src={getVideoUrl(video)}
           className="w-full h-64"
           loop
           muted={isMuted}

@@ -14,8 +14,8 @@ export const useDummyLogin = () => {
       const result = await loginUser({
         variables: {
           // a valid email and password from db
-          email: "johndoe@gmail.com",
-          password: "johndoe123",
+          email: "pepper@gmail.com",
+          password: "pepperbuzz123",
         },
       });
 

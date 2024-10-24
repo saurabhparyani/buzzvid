@@ -31,6 +31,7 @@ import {
 import { toast } from "react-hot-toast";
 import { GET_POSTS_BY_USER_ID } from "@/graphql/queries/GetPostsByUserId";
 import { GET_LIKED_POSTS_BY_USER_ID } from "@/graphql/queries/GetLikedPostsByUserId";
+import { getVideoUrl } from "@/utils/getVideoUrl";
 
 const Post = () => {
   const { id } = useParams({ from: "/_authenticated/post/$id" });
@@ -283,7 +284,7 @@ const Post = () => {
           </div>
           <video
             ref={video}
-            src={`${import.meta.env.VITE_API_URL}${post?.video}`}
+            src={getVideoUrl(post?.video)}
             className="w-full h-full object-contain lg:w-full lg:h-full lg:object-contain max-w-[90vw] max-h-[80vh] mx-auto my-auto mt-12"
             loop
             onClick={toggleVideoPlay}

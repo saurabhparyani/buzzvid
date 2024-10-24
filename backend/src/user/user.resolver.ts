@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -13,6 +14,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { join } from 'path';
 import { createWriteStream } from 'fs';
 import { Follower } from './follower.model';
+import { S3Service } from 'src/s3/s3.service';
+import { S3_BUCKET_NAME } from 'src/config/aws.config';
 
 @Resolver()
 export class UserResolver {
@@ -20,6 +23,7 @@ export class UserResolver {
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
+        private readonly s3Service: S3Service,
     ) {}
 
     @UseFilters(GraphQLErrorFilter)
@@ -113,17 +117,26 @@ export class UserResolver {
     }
 
     private async storeImageAndGetUrl(file: GraphQLUpload): Promise<string> {
-        const { createReadStream, filename } = await file;
-
-        const uniqueFileName = `${uuidv4()}_${filename}`;
-        const imagePath = join(process.cwd(), 'public', uniqueFileName);
-        const imageUrl = `${process.env.APP_URL}/${uniqueFileName}`;
-
-        const readStream = createReadStream();
-        readStream.pipe(createWriteStream(imagePath));
-
-        return imageUrl;
-    }
+        const { createReadStream, mimetype } = await file;
+      
+        const { url, key } = await this.s3Service.getPresignedUrl(mimetype);
+      
+        const stream = createReadStream();
+        const buffer = await new Promise<Buffer>((resolve, reject) => {
+          const chunks: Buffer[] = [];
+          stream.on('data', (chunk) => chunks.push(chunk));
+          stream.on('end', () => resolve(Buffer.concat(chunks)));
+          stream.on('error', reject);
+        });
+      
+        await fetch(url, {
+          method: 'PUT',
+          body: buffer,
+          headers: { 'Content-Type': mimetype },
+        });
+      
+        return `https://${S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+      }
 
     @Mutation(() => User)
     @UseGuards(GraphqlAuthGuard)

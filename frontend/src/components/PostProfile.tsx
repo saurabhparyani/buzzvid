@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
+import { getVideoUrl } from "@/utils/getVideoUrl";
 
 interface PostProfileProps {
   post: {
@@ -13,7 +14,7 @@ const PostProfile: React.FC<PostProfileProps> = ({ post }) => {
     <Link to={`/post/${post.id}`} className="block">
       <div className="aspect-[9/16] bg-gray-200 rounded-lg overflow-hidden">
         <video
-          src={`${import.meta.env.VITE_API_URL}${post.video}`}
+          src={getVideoUrl(post.video)}
           className="object-cover w-full h-full"
         />
       </div>
