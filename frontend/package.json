@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "codegen": "graphql-codegen --config codegen.ts",
     "preview": "vite preview",
-    "generate-routes": "pnpm exec tsr generate"
+    "generate-routes": "npx tsr generate"
   },
   "dependencies": {
     "@apollo/client": "^3.11.8",
